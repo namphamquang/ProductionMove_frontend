@@ -26,10 +26,10 @@ import ListHead from './ListHead';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'name', label: 'Name', alignRight: false },
-    { id: 'address', label: 'Address', alignRight: false },
+    { id: 'name', label: 'Tên', alignRight: false },
+    { id: 'address', label: 'Địa chỉ', alignRight: false },
     { id: 'accountId', label: 'AcountID', alignRight: false },
-    { id: 'sdt', label: 'SDT', alignRight: false },
+    { id: 'sdt', label: 'Số điện thoại', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function TableGuarantee() {
+export default function TableFactory() {
 
     const [page, setPage] = useState(0);
 
@@ -82,7 +82,7 @@ export default function TableGuarantee() {
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get('http://localhost:8000/guarantee');
+                const res = await axios.get('http://localhost:8000/factory');
                 setUserlist(res.data);
             } catch (err) {
                 // console.log('fe : ' + err.message);
@@ -148,7 +148,7 @@ export default function TableGuarantee() {
                                                 <TableCell align="left">{address}</TableCell>
 
 
-                                                <TableCell align="left">{accountId}</TableCell>
+                                                <TableCell align="left">{_id}</TableCell>
 
                                                 <TableCell align="left" >{sdt}</TableCell>
 

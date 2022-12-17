@@ -18,8 +18,8 @@ export default function FactoryRouter() {
       path: '/factory',
       element: <FactoryLayout />,
       children: [
-        { element: <Navigate to="/factory/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage /> },
+        { element: <Navigate to="/factory/dashboard" />, index: true },
+        { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <ProductPage /> },
         { path: 'export', element: <ExportPage /> },
         { path: 'transport', element: <TransportPage /> }

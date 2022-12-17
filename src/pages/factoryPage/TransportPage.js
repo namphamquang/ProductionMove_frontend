@@ -31,7 +31,7 @@ import axios from 'axios';
 import moment from 'moment/moment';
 // components
 
-import CreateUser from '../../sections/@dashboard/user/CreateUser';
+
 
 
 import Label from '../../components/label';

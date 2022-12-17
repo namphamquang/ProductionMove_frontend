@@ -1,6 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
-import DashboardLayout from '../layouts/dashboard';
+import AdminLayout from '../layouts/admin';
 import SimpleLayout from '../layouts/simple';
 
 // ----------------------------------------------------------------------
@@ -15,11 +15,11 @@ import StorePage from'../pages/adminPage/StorePage';
 export default function AdminRouter() {
   const routes = useRoutes([
     {
-      path: '/dashboard',
-      element: <DashboardLayout />,
+      path: '/admin',
+      element: <AdminLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage /> },
+        { element: <Navigate to="/admin/dashboard" />, index: true },
+        { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
@@ -33,7 +33,7 @@ export default function AdminRouter() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/admin/dashboard" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

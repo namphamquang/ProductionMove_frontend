@@ -29,7 +29,7 @@ export default function LoginForm() {
             localStorage.setItem('accessToken', res.data.accessToken);
            //  
            if (res.data.role === "admin") {
-            navigate("/dashboard");
+            navigate("/admin");
            } else {
             navigate(`/${res.data.role}`);
            }

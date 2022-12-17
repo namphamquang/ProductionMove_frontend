@@ -36,9 +36,11 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
     localStorage.clear('role');
-    
     navigate('/');
     window.location.reload();
+  };
+  const handleClosePop = () => {
+    setOpen(null);
   };
 
   return (
@@ -66,7 +68,7 @@ export default function AccountPopover() {
       <Popover
         open={Boolean(open)}
         anchorEl={open}
-        onClose={handleClose}
+        onClose={handleClosePop}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         PaperProps={{
@@ -83,11 +85,9 @@ export default function AccountPopover() {
         }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
+          <Typography variant="subtitle2" noWrap/>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            Quản trị viên
           </Typography>
         </Box>
 
@@ -95,7 +95,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label}>
               {option.label}
             </MenuItem>
           ))}

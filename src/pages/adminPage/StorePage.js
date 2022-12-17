@@ -10,12 +10,12 @@ import { useState } from 'react';
 // @mui
 import { Container, Stack } from '@mui/material';
 // components
-import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../../sections/@dashboard/products';
+import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../../sections/@admin/products';
 // mock
 import PRODUCTS from '../../_mock/products';
-import TableAgency from '../../sections/@dashboard/storage/TableAgency';
-import TableFactory from '../../sections/@dashboard/storage/TableFactory';
-import TableGuarantee from '../../sections/@dashboard/storage/TableGuarantee';
+import TableAgency from '../../sections/@admin/storage/TableAgency';
+import TableFactory from '../../sections/@admin/storage/TableFactory';
+import TableGuarantee from '../../sections/@admin/storage/TableGuarantee';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -67,9 +67,9 @@ export default function StorePage() {
         <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Agency" {...a11yProps(0)} />
-          <Tab label="Factory" {...a11yProps(1)} />
-          <Tab label="Guarantee" {...a11yProps(2)} />
+          <Tab label="Đại lý" {...a11yProps(0)} />
+          <Tab label="Cơ sở sản xuất" {...a11yProps(1)} />
+          <Tab label="Trung tâm bảo hành" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>

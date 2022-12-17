@@ -31,14 +31,14 @@ import axios from 'axios';
 import moment from 'moment/moment';
 // components
 
-import CreateUser from '../../sections/@dashboard/user/CreateUser';
+import CreateUser from '../../sections/@admin/user/CreateUser';
 
 
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead, UserListToolbar } from '../../sections/@admin/user';
 // mock
 // 
 // ----------------------------------------------------------------------
@@ -54,11 +54,11 @@ const styleModal = {
   p: 3,
 };
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'name', label: 'Tên', alignRight: false },
   { id: 'username', label: 'Username', alignRight: false },
   //  { id: 'password', label: 'Password', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'createdAt', label: 'CreatedAt', alignRight: false },
+  { id: 'role', label: 'Vai trò', alignRight: false },
+  { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
   { id: '' },
 ];
 
@@ -239,10 +239,10 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Tài khoản
           </Typography>
           <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+            Cấp tài khoản
           </Button>
           <CreateUser
             columns={columnsPanel}
@@ -272,9 +272,7 @@ export default function UserPage() {
                     const selectedUser = selected.indexOf(name) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+                        <TableCell />
 
                         <TableCell align='left'>{name}</TableCell>
 

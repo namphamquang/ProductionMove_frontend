@@ -18,8 +18,8 @@ export default function AgencyRouter() {
       path: '/agency',
       element: <AgencyLayout />,
       children: [
-        { element: <Navigate to="/agency/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage /> },
+        { element: <Navigate to="/agency/dashboard" />, index: true },
+        { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <ProductPage /> },
         { path: 'export', element: <ExportPage /> },
         {path: 'import', element: <ImportPage/>}

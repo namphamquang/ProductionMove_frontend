@@ -26,10 +26,10 @@ import ListHead from './ListHead';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'address', label: 'Address', alignRight: false },
+  { id: 'name', label: 'Tên', alignRight: false },
+  { id: 'address', label: 'Địa chỉ', alignRight: false },
   { id: 'accountId', label: 'AcountID', alignRight: false },
-  { id: 'sdt', label: 'SDT', alignRight: false },
+  { id: 'sdt', label: 'Số điện thoại', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -148,7 +148,7 @@ export default function TableAgency() {
                         <TableCell align="left">{address}</TableCell>
 
 
-                        <TableCell align="left">{accountId}</TableCell>
+                        <TableCell align="left">{_id}</TableCell>
 
                         <TableCell align="left" >{sdt}</TableCell>
 
