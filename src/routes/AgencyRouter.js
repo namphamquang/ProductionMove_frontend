@@ -8,9 +8,10 @@ import SimpleLayout from '../layouts/simple';
 import ProductPage from '../pages/agencyPage/ProductPage';
 import LoginPage from '../pages/loginPage/LoginPage';
 import Page404 from '../pages/agencyPage/Page404';
-import ExportPage from '../pages/agencyPage/ExportPage';
+import SellPage from '../pages/agencyPage/SellPage';
 import DashboardAppPage from '../pages/agencyPage/DashboardAppPage';
 import ImportPage from '../pages/agencyPage/ImportPage';
+import BillPage from '../pages/agencyPage/BillPage';
 
 export default function AgencyRouter() {
   const routes = useRoutes([
@@ -20,9 +21,10 @@ export default function AgencyRouter() {
       children: [
         { element: <Navigate to="/agency/dashboard" />, index: true },
         { path: 'dashboard', element: <DashboardAppPage /> },
-        { path: 'user', element: <ProductPage /> },
-        { path: 'export', element: <ExportPage /> },
-        {path: 'import', element: <ImportPage/>}
+        { path: 'product', element: <ProductPage /> },
+        { path: 'sell', element: <SellPage /> },
+        {path: 'import', element: <ImportPage/>},
+        {path: 'bill', element: <BillPage/>}
 
 
       ],
@@ -34,7 +36,7 @@ export default function AgencyRouter() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/agency/app" />, index: true },
+        { element: <Navigate to="/agency/dashboard" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

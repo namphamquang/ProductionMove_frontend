@@ -32,17 +32,16 @@ import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
+
 
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
-import { ProductListHead, ProductListToolbar } from '../../sections/@agency/product';
+import { TransListHead, TransListToolbar } from '../../sections/@factory/transport';
 // mock
 // 
-import { fCurrency } from '../../utils/formatNumber';
 // ----------------------------------------------------------------------
 const styleModal = {
   position: 'absolute',
@@ -56,11 +55,12 @@ const styleModal = {
   p: 3,
 };
 const TABLE_HEAD = [
-  { id: '_id', label: 'id', alignRight: false },
+  { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-  { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-  { id: 'price', label: 'Giá sản phẩm', alignRight: false },
-  { id: 'quanity', label: 'Số lượng', alignRight: false },
+  { id: 'quantity', label: 'Số lượng', alignRight: false },
+  { id: 'to', label: 'Vận chuyển tới', alignRight: false },
+  { id: 'status', label: 'Trạng thái', alignRight: false },
+  { id: 'createdAt', label: 'Ngày vận chuyển', alignRight: false },
   { id: '' },
 ];
 
@@ -95,29 +95,29 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ProductPage() {
+export default function BillPage() {
   const [open, setOpen] = useState(null);
-  const [test,setTest] = useState([]);
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('code');
+  const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
-  const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
+  const [BILLLIST, setBillList] = useState([]);
+  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
   const [id, setId] = useState('');
   const columnsPanel = useMemo(
     () => [
       {
-        accessorKey: 'code',
+        accessorKey: 'name',
         header: 'Name',
       },
       {
@@ -148,10 +148,8 @@ export default function ProductPage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/agency/storage/${localStorage.getItem('id')}`);
-
-        setProductList(res.data);
-
+        const res = await axios.get(`http://localhost:8000/delivery/atc/${localStorage.getItem('id')}`);
+        setBillList(res.data);
       } catch (err) {
         // console.log('fe : ' + err.message);
       }
@@ -171,21 +169,23 @@ export default function ProductPage() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
+  const mapColor = (status) => {
+    return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
+  }
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = PRODUCTLIST.map((n) => n.name);
+      const newSelecteds = BILLLIST.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, code) => {
-    const selectedIndex = selected.indexOf(code);
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, code);
+      newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -211,12 +211,13 @@ export default function ProductPage() {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
+      const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
       );
-
-      window.location.reload();
-
-
+      if (res.data.update) {
+        // window.location.reload();
+        console.log(rowData);
+        alert(res.data.msg);
+      }
     } catch (err) {
       console.log(err.message);
     }
@@ -227,9 +228,9 @@ export default function ProductPage() {
     window.location.reload();
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -242,49 +243,46 @@ export default function ProductPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Quản lý sản phẩm
+            Lịch sử vận chuyển
           </Typography>
-          
         </Stack>
 
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <ProductListHead
+                <TransListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={PRODUCTLIST.length}
+                  rowCount={BILLLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, idFactory, code, quantity,name, price, createdAt, updatedAt, _v } = row;
-                    
-                      // console.log(test);
-                    const selectedUser = selected.indexOf(code) !== -1;
+                    const { _id, code, quantity, to, status, createdAt } = row;
+                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell/>
+                        <TableCell padding="checkbox"/>
+                          
 
                         <TableCell align='left'>{_id}</TableCell>
 
                         <TableCell align="left">{code}</TableCell>
 
-                        <TableCell align="left">{name}</TableCell>
-
-                        <TableCell align="left">{fCurrency(price)}</TableCell>
 
                         <TableCell align="left">{quantity}</TableCell>
+                        <TableCell align="left">{to}</TableCell>
+                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="left" >{createdAt}</TableCell>
 
                         <TableCell align="right"/>
-                      
-                       
+                          
                       </TableRow>
                     );
                   })}
@@ -325,7 +323,7 @@ export default function ProductPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={PRODUCTLIST.length}
+            count={BILLLIST.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -334,63 +332,6 @@ export default function ProductPage() {
         </Card>
       </Container>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={createOpenEdit}
-        onClose={() => setOpenEdit(false)}
-        closeAfterTransition
-      >
-        <Fade in={createOpenEdit}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Thêm sản phẩm vào kho
-            </Typography>
-            <ValidatorForm onSubmit={handleUpdate}>
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={localStorage.getItem('id')}
-                label="Mã kho"
-                variant="standard"
-                color="secondary"
-              // disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={rowData.code}
-                label="Name"
-                variant="standard"
-                color="secondary"
-              // disable
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Số lượng"
-                variant="standard"
-                color="secondary"
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    quantity: e.target.value,
-                  }))
-                }}
-              />
-              <Button
-                sx={{ marginTop: '10px' }}
-                variant="contained"
-                //      startIcon={<SendIcon />}
-                fullWidth
-                type="submit"
-              >
-                Thêm
-              </Button>
-            </ValidatorForm>
-          </Box>
-        </Fade>
-      </Modal>
     </>
   );
 }

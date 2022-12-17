@@ -223,6 +223,7 @@ export default function ProductPage() {
                             setRowData(rowData => ({
                               ...rowData,
                               _id: row._id,
+                              code: row.code,
                               idFactory: localStorage.getItem('id'),
                             }));
                           }}>
@@ -306,13 +307,8 @@ export default function ProductPage() {
                 label="Mã sản phẩm"
                 variant="standard"
                 color="secondary"
-                placeholder={rowData.code}
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    code: e.target.value,
-                  }))
-                }}
+                value={rowData.code}
+                disabled
               />
               <TextValidator
                 sx={{ marginTop: '10px' }}

@@ -97,7 +97,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ExportPage() {
+export default function SellPage() {
     const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
@@ -114,7 +114,7 @@ export default function ExportPage() {
     const [createPanelOpen, setCreatePanelOpen] = useState(false);
     const [createOpenEdit, setOpenEdit] = useState(false);
     const [PRODUCTLIST, setProductList] = useState([]);
-    const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
+    const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell:'', nameCustomer: '', address: '', sdt: ''});
     const [id, setId] = useState('');
     const columnsPanel = useMemo(
         () => [
@@ -226,7 +226,10 @@ export default function ExportPage() {
         axios.delete(`http://localhost:8000/user/delete/${id}`);
         window.location.reload();
     };
-    const handleClickExport = () => { }
+    const handleClickSell = () => {
+        axios.post('http://localhost:8000/agency/sell-product', rowData);
+        window.location.reload();
+     }
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
@@ -242,7 +245,7 @@ export default function ExportPage() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Nhập sản phẩm
+                        Bán sản phẩm
                     </Typography>
                     <CreateProduct
                         columns={columnsPanel}
@@ -285,18 +288,17 @@ export default function ExportPage() {
 
                                                 <TableCell align="right">
                                                     <Button onClick={(e) => {
-                                                        setOpenEdit(true)
+                                                        setOpenEdit(true);
                                                         setId(row._id);
-                                                        console.log(id);
                                                         setRowData(rowData => ({
                                                             ...rowData,
                                                             _id: row._id,
-                                                            idFactory: localStorage.getItem('id'),
+                                                            idAgency: localStorage.getItem('id'),
                                                             code: row.code,
                                                             quantity: row.quantity,
                                                         }));
                                                     }}>
-                                                        Xuất
+                                                        Bán
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>
@@ -358,60 +360,76 @@ export default function ExportPage() {
                 <Fade in={createOpenEdit}>
                     <Box sx={styleModal}>
                         <Typography id="transition-modal-title" variant="h6" component="h2">
-                            Nhập thông tin vận chuyển
+                            Nhập thông tin đơn hàng
                         </Typography>
-                        <FormControl fullWidth sx={{ margin: '15px 0' }}>
-                            <InputLabel id="demo-simple-select-label">Đại lý</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                               // value={age}
-                                label="Age"
-                                // onChange={handleChange}
-                            >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth sx={{ margin: '15px 0' }}>
-                            <InputLabel id="demo-simple-select-label">Mã sản phẩm</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                               // value={age}
-                                label="Age"
-                                // onChange={handleChange}
-                            >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
+                        
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Tên khách hàng"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    nameCustomer: e.target.value,
+                                }))
+                            }}                        
+                        />
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Địa chỉ"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    address: e.target.value,
+                                }))
+                            }}
+                        />
+                       <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Số điện thoại"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    sdt: e.target.value,
+                                }))
+                            }}                        
+                        />
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Mã sản phẩm"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            value={rowData.code}  
+                            disabled                    
+                        />
                         <TextField
                             sx={{ margin: '15px 0' }}
                             label="Số lượng"
                             variant="standard"
                             fullWidth
-                            type="number"
-                        // value={amountExport}
-                        // onChange={(e) => setAmountExport(e.target.value)}
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Ghi chú"
-                            variant="standard"
-                            fullWidth
                             type="text"
-                        // value={description}
-                        // onChange={(e) => setDescription(e.target.value)}
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    quantitySell: e.target.value,
+                                }))
+                            }}                        
                         />
                         <Button
                             sx={{ marginTop: '10px' }}
                             variant="contained"
                             fullWidth
                             type="submit"
-                            onClick={handleClickExport}
+                            onClick={handleClickSell}
                         >
                             Giao hàng
                         </Button>
