@@ -19,8 +19,8 @@ import axios from 'axios';
 
 import Scrollbar from '../../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../user';
 import ListHead from './ListHead';
+import ListToolbar from './ListToolbar';
 // mock
 // 
 // ----------------------------------------------------------------------
@@ -78,14 +78,13 @@ export default function TableAgency() {
   const [USERLIST, setUserlist] = useState([]);
 
 
-
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get('http://localhost:8000/agency');
         setUserlist(res.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        console.log(err.message);
       }
     };
     getData();
@@ -121,12 +120,12 @@ export default function TableAgency() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Store | Minimal UI </title>
       </Helmet>
 
       <Container>
         <Card>
-          <UserListToolbar numSelected={0} filterName={filterName} onFilterName={handleFilterByName} />
+          <ListToolbar numSelected={0} filterName={filterName} onFilterName={handleFilterByName} />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>

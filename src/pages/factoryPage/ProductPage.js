@@ -97,7 +97,7 @@ function applySortFilter(array, comparator, query) {
 
 export default function ProductPage() {
   const [open, setOpen] = useState(null);
-  const [test,setTest] = useState([]);
+  const [test, setTest] = useState([]);
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -109,91 +109,32 @@ export default function ProductPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
+
   const [createOpenEdit, setOpenEdit] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
-  const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'code',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Password'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Phone',
-      },
 
-    ],
-    [],
-  );
+  const [id, setId] = useState('');
+
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/factory/storage/${localStorage.getItem('id')}`);
-        const res2 = await axios.get(`http://localhost:8000/product`);
         setProductList(res.data);
-        setTest(res2.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        console.log(err.message);
       }
     };
     getData();
   }, []);
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
 
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = PRODUCTLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, code) => {
-    const selectedIndex = selected.indexOf(code);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, code);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -221,11 +162,8 @@ export default function ProductPage() {
       console.log(err.message);
     }
   };
-  const handleDelete = () => {
-    console.log(id);
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
-  };
+
+ 
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -236,7 +174,7 @@ export default function ProductPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Import | Minimal UI </title>
       </Helmet>
 
       <Container>
@@ -244,18 +182,10 @@ export default function ProductPage() {
           <Typography variant="h4" gutterBottom>
             Nhập sản phẩm
           </Typography>
-          <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
-            Thêm sản phẩm
-          </Button>
-          <CreateProduct
-            columns={columnsPanel}
-            open={createPanelOpen}
-            onClose={() => setCreatePanelOpen(false)}
-          />
         </Stack>
 
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -265,19 +195,15 @@ export default function ProductPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={PRODUCTLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, idFactory, code, quantity,name, price, createdAt, updatedAt, _v } = row;
-                    
-                      // console.log(test);
-                    const selectedUser = selected.indexOf(code) !== -1;
+                    const { _id, code, quantity, name, price } = row;
+
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell/>
+                      <TableRow hover key={_id}>
+                        <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
 
@@ -298,8 +224,6 @@ export default function ProductPage() {
                               ...rowData,
                               _id: row._id,
                               idFactory: localStorage.getItem('id'),
-                              code: row.code,
-                              quantity: row.quantity,
                             }));
                           }}>
                             Nhập thêm
@@ -374,16 +298,21 @@ export default function ProductPage() {
                 label="Mã kho"
                 variant="standard"
                 color="secondary"
-              // disabled
+                disabled
               />
               <TextValidator
                 sx={{ marginTop: '10px' }}
                 fullWidth
-                value={rowData.code}
-                label="Name"
+                label="Mã sản phẩm"
                 variant="standard"
                 color="secondary"
-              // disable
+                placeholder={rowData.code}
+                onChange={(e) => {
+                  setRowData(rowData => ({
+                    ...rowData,
+                    code: e.target.value,
+                  }))
+                }}
               />
               <TextValidator
                 sx={{ marginTop: '10px' }}
@@ -401,7 +330,6 @@ export default function ProductPage() {
               <Button
                 sx={{ marginTop: '10px' }}
                 variant="contained"
-                //      startIcon={<SendIcon />}
                 fullWidth
                 type="submit"
               >

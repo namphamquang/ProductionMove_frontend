@@ -4,15 +4,12 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
 // @mui
 import { Container, Stack } from '@mui/material';
 // components
-import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../../sections/@admin/products';
 // mock
-import PRODUCTS from '../../_mock/products';
+
 import TableAgency from '../../sections/@admin/storage/TableAgency';
 import TableFactory from '../../sections/@admin/storage/TableFactory';
 import TableGuarantee from '../../sections/@admin/storage/TableGuarantee';
@@ -58,31 +55,36 @@ export default function StorePage() {
   };
 
   return (
-    <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+    <>
+      <Helmet>
+        <title> Store | Minimal UI </title>
+      </Helmet>
+
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Quản lý kho
           </Typography>
         </Stack>
         <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Đại lý" {...a11yProps(0)} />
-          <Tab label="Cơ sở sản xuất" {...a11yProps(1)} />
-          <Tab label="Trung tâm bảo hành" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <TableAgency/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <TableFactory/>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <TableGuarantee/>
-      </TabPanel>
-    </Box>
-    </Container>
-    
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+              <Tab label="Đại lý" {...a11yProps(0)} />
+              <Tab label="Cơ sở sản xuất" {...a11yProps(1)} />
+              <Tab label="Trung tâm bảo hành" {...a11yProps(2)} />
+            </Tabs>
+          </Box>
+          <TabPanel value={value} index={0}>
+            <TableAgency />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <TableFactory />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <TableGuarantee />
+          </TabPanel>
+        </Box>
+      </Container>
+    </>
   );
 }

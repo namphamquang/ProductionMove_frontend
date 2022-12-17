@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -10,10 +9,8 @@ import {
   Modal,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
-  Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -25,15 +22,12 @@ import {
   TablePagination,
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
-// import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
-
 import CreateUser from '../../sections/@admin/user/CreateUser';
-
-
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
@@ -56,7 +50,6 @@ const styleModal = {
 const TABLE_HEAD = [
   { id: 'name', label: 'Tên', alignRight: false },
   { id: 'username', label: 'Username', alignRight: false },
-  //  { id: 'password', label: 'Password', alignRight: false },
   { id: 'role', label: 'Vai trò', alignRight: false },
   { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
   { id: '' },
@@ -116,7 +109,7 @@ export default function UserPage() {
     () => [
       {
         accessorKey: 'name',
-        header: 'Name',
+        header: 'Tên',
       },
       {
         accessorKey: 'username',
@@ -124,19 +117,19 @@ export default function UserPage() {
       },
       {
         accessorKey: 'password',
-        header: 'Password'
+        header: 'Mật khẩu'
       },
       {
         accessorKey: 'role',
-        header: 'Role',
+        header: 'Vai trò',
       },
       {
         accessorKey: 'address',
-        header: 'Address',
+        header: 'Địa chỉ',
       },
       {
         accessorKey: 'sdt',
-        header: 'Phone',
+        header: 'Số điện thoại',
       },
 
     ],
@@ -149,7 +142,7 @@ export default function UserPage() {
         const res = await axios.get('http://localhost:8000/user');
         setUserlist(res.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        console.log(err.message);
       }
     };
     getData();
@@ -168,29 +161,6 @@ export default function UserPage() {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -210,8 +180,7 @@ export default function UserPage() {
       const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
       );
       if (res.data.update) {
-        // window.location.reload();
-        console.log(rowData);
+        window.location.reload();
         alert(res.data.msg);
       }
     } catch (err) {
@@ -219,7 +188,6 @@ export default function UserPage() {
     }
   };
   const handleDelete = () => {
-    console.log(id);
     axios.delete(`http://localhost:8000/user/delete/${id}`);
     window.location.reload();
   };
@@ -252,8 +220,7 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
+          <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -262,16 +229,13 @@ export default function UserPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={USERLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, name, username, password, role, createdAt, updatedAt, _v } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { _id, name, username, role, createdAt } = row;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} >
                         <TableCell />
 
                         <TableCell align='left'>{name}</TableCell>
@@ -287,7 +251,6 @@ export default function UserPage() {
                           <IconButton size="large" color="inherit" onClick={(e) => {
                             handleOpenMenu(e);
                             setId(row._id);
-                            console.log(id);
                             setRowData(rowData => ({
                               ...rowData,
                               _id: row._id,
@@ -375,6 +338,7 @@ export default function UserPage() {
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
+
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"
@@ -401,7 +365,7 @@ export default function UserPage() {
                   sx={{ marginTop: '10px' }}
                   fullWidth
                   value={rowData.name}
-                  label="Name"
+                  label="Tên"
                   variant="standard"
                   color="secondary"
                 />
@@ -409,14 +373,14 @@ export default function UserPage() {
                   sx={{ marginTop: '10px' }}
                   fullWidth
                   value={rowData.username}
-                  label="Email"
+                  label="Username"
                   variant="standard"
                   color="secondary"
                 />
                 <TextValidator
                   sx={{ marginTop: '10px' }}
                   fullWidth
-                  label="Role"
+                  label="Vai trò"
                   value={rowData.role}
                   variant="standard"
                   color="secondary"
@@ -425,7 +389,7 @@ export default function UserPage() {
                 <TextValidator
                   sx={{ marginTop: '10px' }}
                   fullWidth
-                  label="Password"
+                  label="Mật khẩu"
                   variant="standard"
                   color="secondary"
                   onChange={(e) => {
@@ -437,7 +401,6 @@ export default function UserPage() {
                 <Button
                   sx={{ marginTop: '10px' }}
                   variant="contained"
-                  //      startIcon={<SendIcon />}
                   fullWidth
                   type="submit"
                 >
