@@ -1,31 +1,21 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
-  Box,
   Card,
   Table,
-  Modal,
   Stack,
   Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
 // components
 
@@ -92,11 +82,8 @@ export default function ProductPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createOpenEdit, setOpenEdit] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
-  const [id, setId] = useState('');
- 
+
 
   useEffect(() => {
     const getData = async () => {
@@ -111,7 +98,7 @@ export default function ProductPage() {
     };
     getData();
   }, []);
- 
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -119,16 +106,6 @@ export default function ProductPage() {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = PRODUCTLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
- 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -143,7 +120,7 @@ export default function ProductPage() {
     setFilterName(event.target.value);
   };
 
-  
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -162,7 +139,7 @@ export default function ProductPage() {
           <Typography variant="h4" gutterBottom>
             Quản lý sản phẩm
           </Typography>
-          
+
         </Stack>
 
         <Card>
@@ -178,17 +155,15 @@ export default function ProductPage() {
                   rowCount={PRODUCTLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, idFactory, code, quantity,name, price, createdAt, updatedAt, _v } = row;
-                    
-                      // console.log(test);
+                    const { _id, code, quantity, name, price } = row;
+
                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell/>
+                        <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
 
@@ -200,9 +175,9 @@ export default function ProductPage() {
 
                         <TableCell align="left">{quantity}</TableCell>
 
-                        <TableCell align="right"/>
-                      
-                       
+                        <TableCell align="right" />
+
+
                       </TableRow>
                     );
                   })}
@@ -252,7 +227,7 @@ export default function ProductPage() {
         </Card>
       </Container>
 
-     
+
     </>
   );
 }

@@ -22,13 +22,10 @@ import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
 
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
@@ -36,7 +33,6 @@ import Scrollbar from '../../components/scrollbar';
 import { ProductListHead, ProductListToolbar } from '../../sections/@agency/product';
 // mock
 // 
-import { fCurrency } from '../../utils/formatNumber';
 // ----------------------------------------------------------------------
 const styleModal = {
   position: 'absolute',
@@ -90,8 +86,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ImportPage() {
-  const [open, setOpen] = useState(null);
-  const [test,setTest] = useState([]);
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -103,27 +98,25 @@ export default function ImportPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ idDelivery:'', code:'', quantity: '', });
-  const [id, setId] = useState('');
-  
+  const [rowData, setRowData] = useState({ idDelivery: '', code: '', quantity: '', });
+
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/delivery/fta-delivering/${localStorage.getItem('id')}`);
-        
+
         setProductList(res.data);
-     
+
       } catch (err) {
         // console.log('fe : ' + err.message);
       }
     };
     getData();
   }, []);
-  
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -131,16 +124,9 @@ export default function ImportPage() {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = PRODUCTLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
 
-  
+
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -169,8 +155,8 @@ export default function ImportPage() {
   };
   const handleImport = async (idD) => {
     try {
-        console.log(rowData);
-      const res = await axios.post(`http://localhost:8000/agency/submit-fta`, {idDelivery: idD}
+      console.log(rowData);
+      const res = await axios.post(`http://localhost:8000/agency/submit-fta`, { idDelivery: idD }
       );
 
       window.location.reload();
@@ -180,7 +166,7 @@ export default function ImportPage() {
       console.log(err.message);
     }
   };
-  
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -199,10 +185,8 @@ export default function ImportPage() {
           <Typography variant="h4" gutterBottom>
             Nhập sản phẩm
           </Typography>
-          <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
-            Thêm sản phẩm
-          </Button>
-          
+
+
         </Stack>
 
         <Card>
@@ -218,17 +202,17 @@ export default function ImportPage() {
                   rowCount={PRODUCTLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
+
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, from, date } = row;
-                    
-                      // console.log(test);
+
+                    // console.log(test);
                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell/>
+                        <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
 
@@ -243,7 +227,7 @@ export default function ImportPage() {
                         <TableCell align="right">
                           <Button onClick={() => {
                             handleImport(row._id);
-                            }}>
+                          }}>
                             Nhận hàng
                           </Button>
                         </TableCell>
@@ -296,63 +280,7 @@ export default function ImportPage() {
         </Card>
       </Container>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={createOpenEdit}
-        onClose={() => setOpenEdit(false)}
-        closeAfterTransition
-      >
-        <Fade in={createOpenEdit}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Thêm sản phẩm vào kho
-            </Typography>
-            <ValidatorForm onSubmit={handleUpdate}>
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={localStorage.getItem('id')}
-                label="Mã kho"
-                variant="standard"
-                color="secondary"
-              // disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={rowData.code}
-                label="Name"
-                variant="standard"
-                color="secondary"
-              // disable
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Số lượng"
-                variant="standard"
-                color="secondary"
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    quantity: e.target.value,
-                  }))
-                }}
-              />
-              <Button
-                sx={{ marginTop: '10px' }}
-                variant="contained"
-                //      startIcon={<SendIcon />}
-                fullWidth
-                type="submit"
-              >
-                Thêm
-              </Button>
-            </ValidatorForm>
-          </Box>
-        </Fade>
-      </Modal>
+
     </>
   );
 }

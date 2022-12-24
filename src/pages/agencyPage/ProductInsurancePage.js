@@ -1,41 +1,26 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 // @mui
 import {
-    Box,
     Card,
     Table,
-    Modal,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
-    Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
-
-
-
 import Label from '../../components/label';
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -87,7 +72,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ProductInsurancePage() {
-    const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
 
@@ -100,11 +84,7 @@ export default function ProductInsurancePage() {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [createPanelOpen, setCreatePanelOpen] = useState(false);
-    const [createOpenEdit, setOpenEdit] = useState(false);
     const [BILLLIST, setBillList] = useState([]);
-    const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
-    const [id, setId] = useState('');
 
 
     useEffect(() => {
@@ -128,14 +108,7 @@ export default function ProductInsurancePage() {
     const mapColor = (status) => {
         return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : 'default';
     }
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = BILLLIST.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
+
 
 
 
@@ -151,7 +124,7 @@ export default function ProductInsurancePage() {
         setPage(0);
         setFilterName(event.target.value);
     };
-    const handleReturn = (idBill) => { 
+    const handleReturn = (idBill) => {
         const body = {};
         body.idOrderGuarantee = idBill;
         console.log(body);
@@ -175,7 +148,7 @@ export default function ProductInsurancePage() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Bảo hành
+                        Trả lại sản phẩm
                     </Typography>
                 </Stack>
 
@@ -192,7 +165,7 @@ export default function ProductInsurancePage() {
                                     rowCount={BILLLIST.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
+
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -209,7 +182,7 @@ export default function ProductInsurancePage() {
                                                 {(status === 'Đang vận chuyển' || status === 'Đang bảo hành' || status === 'Khách đã nhận') &&
                                                     (<TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>)}
                                                 {(status !== 'Đang vận chuyển' && status !== 'Đang bảo hành' && status !== 'Khách đã nhận') &&
-                                                    (<TableCell align="center"><Button onClick={() => {handleReturn(_id);}} sx={{ fontSize: 12, p: 0.5}} variant="contained">Giao cho khách</Button></TableCell>)}
+                                                    (<TableCell align="center"><Button onClick={() => { handleReturn(_id); }} sx={{ fontSize: 12, p: 0.5 }} variant="contained">Giao cho khách</Button></TableCell>)}
                                                 <TableCell align="left" >{date}</TableCell>
                                             </TableRow>
                                         );

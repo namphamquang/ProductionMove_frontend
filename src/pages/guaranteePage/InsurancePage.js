@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -10,10 +9,8 @@ import {
   Modal,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
-  Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -23,16 +20,12 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  TextField
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
-
-
-
 
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
@@ -109,41 +102,9 @@ export default function InsurancePage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
   const [BILLLIST, setBillList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
-  const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Password'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Phone',
-      },
-
-    ],
-    [],
-  );
+  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '', idOrderGuarantee: '' });
 
   useEffect(() => {
     const getData = async () => {
@@ -172,29 +133,8 @@ export default function InsurancePage() {
   const mapColor = (status) => {
     return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
   }
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = BILLLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -209,25 +149,10 @@ export default function InsurancePage() {
     setFilterName(event.target.value);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
-      );
-      if (res.data.update) {
-        // window.location.reload();
-        console.log(rowData);
-        alert(res.data.msg);
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-  const handleDelete = () => {
-    console.log(id);
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
+  const handleReturnAgency = () => {
+    axios.post(`http://localhost:8000/guarantee/submit-gta`, rowData);
     window.location.reload();
-  };
-
+  }
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
   const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
@@ -246,10 +171,8 @@ export default function InsurancePage() {
             Lịch sử vận chuyển
           </Typography>
         </Stack>
-
         <Card>
           <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -260,16 +183,16 @@ export default function InsurancePage() {
                   rowCount={BILLLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
+
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, nameAgency, status, date } = row;
-                     const selectedUser = selected.indexOf(code) !== -1;
+                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox"/>
-                          
+                        <TableCell padding="checkbox" />
+
 
                         <TableCell align='left'>{_id}</TableCell>
 
@@ -278,11 +201,24 @@ export default function InsurancePage() {
 
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{nameAgency}</TableCell>
-                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="left"><Label color={mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
 
-                        <TableCell align="right"/>
-                          
+                        <TableCell align="right">
+                          <IconButton size="large" color="inherit" onClick={(e) => {
+                            setRowData(rowData => ({
+                              ...rowData,
+                              idOrderGuarantee: row._id,
+                            }));
+                            console.log(rowData);
+                            handleOpenMenu(e);
+
+                          }}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell align="right" />
+
                       </TableRow>
                     );
                   })}
@@ -331,7 +267,68 @@ export default function InsurancePage() {
           />
         </Card>
       </Container>
+      <Popover
+        open={Boolean(open)}
+        anchorEl={open}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{
+          sx: {
+            p: 1,
+            width: 140,
+            '& .MuiMenuItem-root': {
+              px: 1,
+              typography: 'body2',
+              borderRadius: 0.75,
+            },
+          },
+        }}
+      >
+        <MenuItem onClick={() => { setOpenEdit(true) }}>
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          Trả lại đại lý
+        </MenuItem>
+        <MenuItem sx={{ color: 'error.main' }}>
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+          Trả về nơi sản xuất
+        </MenuItem>
+      </Popover>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createOpenEdit}
+        onClose={() => setOpenEdit(false)}
+        closeAfterTransition
+      >
+        <Fade in={createOpenEdit}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Đơn hàng
+            </Typography>
+            <TextField
+              sx={{ margin: '15px 0' }}
+              label="Mã đơn hàng "
+              variant="standard"
+              value={rowData.idOrderGuarantee}
+              fullWidth
+              type="text"
+              disabled
 
+            />
+
+            <Button
+              sx={{ marginTop: '10px' }}
+              variant="contained"
+              fullWidth
+              type="submit"
+              onClick={handleReturnAgency}
+            >
+              Trả lại
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
     Box,
@@ -10,10 +9,8 @@ import {
     Modal,
     Stack,
     Paper,
-    Avatar,
     Button,
     Popover,
-    Checkbox,
     TableRow,
     MenuItem,
     TableBody,
@@ -30,15 +27,8 @@ import {
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
-
-
-
-
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
@@ -62,7 +52,7 @@ const TABLE_HEAD = [
     { id: 'id', label: 'Mã đơn', alignRight: false },
     { id: 'code', label: 'Mã sản phẩm', alignRight: false },
     { id: 'quantity', label: 'Số lượng', alignRight: false },
-    { id: 'idCustomer', label: 'ID khách hàng', alignRight: false },
+    { id: 'nameCustomer', label: 'Khách hàng', alignRight: false },
     { id: 'date', label: 'Ngày mua', alignRight: false },
     { id: '' },
 ];
@@ -112,11 +102,9 @@ export default function ProductCustomerPage() {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [createPanelOpen, setCreatePanelOpen] = useState(false);
     const [createOpenEdit, setOpenEdit] = useState(false);
     const [BILLLIST, setBillList] = useState([]);
     const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
-    const [id, setId] = useState('');
     const [guarantee, setGuarantee] = useState([]);
 
     useEffect(() => {
@@ -200,7 +188,7 @@ export default function ProductCustomerPage() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Lịch sử vận chuyển
+                        Xử lý lỗi sản phẩm
                     </Typography>
                 </Stack>
 
@@ -221,7 +209,7 @@ export default function ProductCustomerPage() {
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, code, idCustomer, quantity , date } = row;
+                                        const { _id, code, nameCustomer, quantity, date } = row;
                                         const selectedUser = selected.indexOf(code) !== -1;
                                         return (
                                             <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -231,17 +219,17 @@ export default function ProductCustomerPage() {
                                                 <TableCell align='left'>{_id}</TableCell>
                                                 <TableCell align="left">{code}</TableCell>
                                                 <TableCell align="left">{quantity}</TableCell>
-                                                <TableCell align="left">{idCustomer}</TableCell>
+                                                <TableCell align="left">{nameCustomer}</TableCell>
                                                 <TableCell align="left" >{date}</TableCell>
                                                 <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={(e) => {
                                                         setRowData(rowData => ({
                                                             ...rowData,
                                                             idDelivery: row._id,
-                                                          }));
-                                                          console.log(rowData);
+                                                        }));
+                                                        console.log(rowData);
                                                         handleOpenMenu(e);
-                                                        
+
                                                     }}>
                                                         <Iconify icon={'eva:more-vertical-fill'} />
                                                     </IconButton>
@@ -322,8 +310,6 @@ export default function ProductCustomerPage() {
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
                     Thu hồi
                 </MenuItem>
-
-
             </Popover>
             <Modal
                 aria-labelledby="transition-modal-title"
@@ -345,7 +331,7 @@ export default function ProductCustomerPage() {
                             fullWidth
                             type="text"
                             disabled
-                            
+
                         />
                         <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
                             <InputLabel id="demo-simple-select-label">Trung tâm bảo hành</InputLabel>
@@ -373,7 +359,7 @@ export default function ProductCustomerPage() {
                             label="Số lượng"
                             variant="standard"
                             fullWidth
-                            type="text" 
+                            type="text"
                             onChange={(e) => {
                                 setRowData(rowData => ({
                                     ...rowData,
@@ -393,7 +379,7 @@ export default function ProductCustomerPage() {
                                     description: e.target.value,
                                 }))
                             }}
-                            
+
                         />
 
                         <Button

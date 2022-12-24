@@ -1,60 +1,31 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
-  Box,
   Card,
   Table,
-  Modal,
   Stack,
   Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
-
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
-
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
 import { ProductListHead, ProductListToolbar } from '../../sections/@guarantee/product';
-// mock
-// 
-import { fCurrency } from '../../utils/formatNumber';
-// ----------------------------------------------------------------------
-const styleModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: '10px',
-  p: 3,
-};
+
 const TABLE_HEAD = [
   { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
@@ -96,8 +67,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ReceivePage() {
-  const [open, setOpen] = useState(null);
-  const [test,setTest] = useState([]);
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -109,27 +78,24 @@ export default function ReceivePage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
-  const [createOpenEdit, setOpenEdit] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ idDelivery:'', code:'', quantity: '', });
-  const [id, setId] = useState('');
-  
+  const [rowData, setRowData] = useState({ idDelivery: '', code: '', quantity: '', });
+
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/delivery/atg-delivering/${localStorage.getItem('id')}`);
-        
+
         setProductList(res.data);
-     
+
       } catch (err) {
         // console.log('fe : ' + err.message);
       }
     };
     getData();
   }, []);
-  
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -137,16 +103,6 @@ export default function ReceivePage() {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = PRODUCTLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -161,32 +117,19 @@ export default function ReceivePage() {
     setFilterName(event.target.value);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
-      );
 
-      window.location.reload();
-
-
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
   const handleImport = async (idD) => {
     try {
-        console.log(rowData);
-      const res = await axios.post(`http://localhost:8000/guarantee/submit-atg`, {idOrderGuarantee: idD}
+      console.log(rowData);
+      const res = await axios.post(`http://localhost:8000/guarantee/submit-atg`, { idOrderGuarantee: idD }
       );
 
       window.location.reload();
-
 
     } catch (err) {
       console.log(err.message);
     }
   };
-  
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -203,9 +146,9 @@ export default function ReceivePage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Nhập sản phẩm
+            Nhận sản phẩm
           </Typography>
-          
+
         </Stack>
 
         <Card>
@@ -221,17 +164,14 @@ export default function ReceivePage() {
                   rowCount={PRODUCTLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, nameAgency, date } = row;
-                    
-                      // console.log(test);
                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell/>
+                        <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
 
@@ -246,7 +186,7 @@ export default function ReceivePage() {
                         <TableCell align="right">
                           <Button onClick={() => {
                             handleImport(row._id);
-                            }}>
+                          }}>
                             Tiếp nhận
                           </Button>
                         </TableCell>
@@ -298,8 +238,6 @@ export default function ReceivePage() {
           />
         </Card>
       </Container>
-
-      
     </>
   );
 }

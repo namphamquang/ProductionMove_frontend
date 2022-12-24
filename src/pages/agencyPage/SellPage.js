@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, {  useState, useEffect } from 'react';
 // @mui
 import {
     Box,
@@ -10,37 +9,23 @@ import {
     Modal,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
-    FormControl,
-    InputLabel,
-    Select,
     TextField,
-    Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
 
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
-
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -98,7 +83,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function SellPage() {
-    const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
 
@@ -111,11 +95,9 @@ export default function SellPage() {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [createPanelOpen, setCreatePanelOpen] = useState(false);
     const [createOpenEdit, setOpenEdit] = useState(false);
     const [PRODUCTLIST, setProductList] = useState([]);
     const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell:'', nameCustomer: '', address: '', sdt: ''});
-    const [id, setId] = useState('');
    
 
     useEffect(() => {
@@ -137,14 +119,7 @@ export default function SellPage() {
         setOrderBy(property);
     };
 
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = PRODUCTLIST.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
+    
 
    
     const handleChangePage = (event, newPage) => {
@@ -198,7 +173,7 @@ export default function SellPage() {
                                     rowCount={PRODUCTLIST.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
+                                   
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -214,13 +189,9 @@ export default function SellPage() {
 
 
                                                 <TableCell align="left">{quantity}</TableCell>
-
-
-
                                                 <TableCell align="right">
                                                     <Button onClick={(e) => {
                                                         setOpenEdit(true);
-                                                        setId(row._id);
                                                         setRowData(rowData => ({
                                                             ...rowData,
                                                             _id: row._id,
