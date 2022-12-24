@@ -31,10 +31,15 @@ import axios from 'axios';
 import moment from 'moment/moment';
 // components
 
+
+import CreateProduct from '../../sections/@agency/product/CreateProduct';
+
+import Label from '../../components/label';
+import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
-import { ProductListHead, ProductListToolbar } from '../../sections/@factory/product';
+import { ProductListHead, ProductListToolbar } from '../../sections/@guarantee/product';
 // mock
 // 
 import { fCurrency } from '../../utils/formatNumber';
@@ -51,11 +56,11 @@ const styleModal = {
   p: 3,
 };
 const TABLE_HEAD = [
-  { id: '_id', label: 'id', alignRight: false },
+  { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-  { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-  { id: 'price', label: 'Giá sản phẩm', alignRight: false },
   { id: 'quanity', label: 'Số lượng', alignRight: false },
+  { id: 'from', label: 'Nhận từ', alignRight: false },
+  { id: 'createdAt', label: 'Ngày giao', alignRight: false },
   { id: '' },
 ];
 
@@ -90,42 +95,58 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ProductPage() {
+export default function ReceivePage() {
+  const [open, setOpen] = useState(null);
+  const [test,setTest] = useState([]);
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
+
+  const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('code');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
-
+  const [rowData, setRowData] = useState({ idDelivery:'', code:'', quantity: '', });
   const [id, setId] = useState('');
-
+  
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/factory/storage/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/delivery/atg-delivering/${localStorage.getItem('id')}`);
+        
         setProductList(res.data);
+     
       } catch (err) {
-        console.log(err.message);
+        // console.log('fe : ' + err.message);
       }
     };
     getData();
   }, []);
-
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = PRODUCTLIST.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -152,8 +173,20 @@ export default function ProductPage() {
       console.log(err.message);
     }
   };
+  const handleImport = async (idD) => {
+    try {
+        console.log(rowData);
+      const res = await axios.post(`http://localhost:8000/guarantee/submit-atg`, {idOrderGuarantee: idD}
+      );
 
- 
+      window.location.reload();
+
+
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+  
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -164,7 +197,7 @@ export default function ProductPage() {
   return (
     <>
       <Helmet>
-        <title> Import | Minimal UI </title>
+        <title> User | Minimal UI </title>
       </Helmet>
 
       <Container>
@@ -172,10 +205,11 @@ export default function ProductPage() {
           <Typography variant="h4" gutterBottom>
             Nhập sản phẩm
           </Typography>
+          
         </Stack>
 
         <Card>
-          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -185,39 +219,35 @@ export default function ProductPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={PRODUCTLIST.length}
+                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
+                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, name, price } = row;
-
+                    const { _id, code, quantity, nameAgency, date } = row;
+                    
+                      // console.log(test);
+                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id}>
-                        <TableCell />
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                        <TableCell/>
 
                         <TableCell align='left'>{_id}</TableCell>
 
                         <TableCell align="left">{code}</TableCell>
 
-                        <TableCell align="left">{name}</TableCell>
-
-                        <TableCell align="left">{fCurrency(price)}</TableCell>
-
                         <TableCell align="left">{quantity}</TableCell>
 
+                        <TableCell align="left">{nameAgency}</TableCell>
+
+                        <TableCell align="left">{date}</TableCell>
+
                         <TableCell align="right">
-                          <Button onClick={(e) => {
-                            setOpenEdit(true)
-                            setId(row._id);
-                            console.log(id);
-                            setRowData(rowData => ({
-                              ...rowData,
-                              _id: row._id,
-                              code: row.code,
-                              idFactory: localStorage.getItem('id'),
-                            }));
-                          }}>
-                            Nhập thêm
+                          <Button onClick={() => {
+                            handleImport(row._id);
+                            }}>
+                            Tiếp nhận
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -269,62 +299,7 @@ export default function ProductPage() {
         </Card>
       </Container>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={createOpenEdit}
-        onClose={() => setOpenEdit(false)}
-        closeAfterTransition
-      >
-        <Fade in={createOpenEdit}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Thêm sản phẩm vào kho
-            </Typography>
-            <ValidatorForm onSubmit={handleUpdate}>
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={localStorage.getItem('id')}
-                label="Mã kho"
-                variant="standard"
-                color="secondary"
-                disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Mã sản phẩm"
-                variant="standard"
-                color="secondary"
-                value={rowData.code}
-                disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Số lượng"
-                variant="standard"
-                color="secondary"
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    quantity: e.target.value,
-                  }))
-                }}
-              />
-              <Button
-                sx={{ marginTop: '10px' }}
-                variant="contained"
-                fullWidth
-                type="submit"
-              >
-                Thêm
-              </Button>
-            </ValidatorForm>
-          </Box>
-        </Fade>
-      </Modal>
+      
     </>
   );
 }

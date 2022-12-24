@@ -31,13 +31,17 @@ import axios from 'axios';
 import moment from 'moment/moment';
 // components
 
+
+
+
+import Label from '../../components/label';
+import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
-import { ProductListHead, ProductListToolbar } from '../../sections/@factory/product';
+import { TransListHead, TransListToolbar } from '../../sections/@guarantee/transport';
 // mock
 // 
-import { fCurrency } from '../../utils/formatNumber';
 // ----------------------------------------------------------------------
 const styleModal = {
   position: 'absolute',
@@ -51,11 +55,12 @@ const styleModal = {
   p: 3,
 };
 const TABLE_HEAD = [
-  { id: '_id', label: 'id', alignRight: false },
+  { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-  { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-  { id: 'price', label: 'Giá sản phẩm', alignRight: false },
-  { id: 'quanity', label: 'Số lượng', alignRight: false },
+  { id: 'quantity', label: 'Số lượng', alignRight: false },
+  { id: 'nameAgency', label: 'Nhận từ', alignRight: false },
+  { id: 'status', label: 'Trạng thái', alignRight: false },
+  { id: 'date', label: 'Ngày bảo hành', alignRight: false },
   { id: '' },
 ];
 
@@ -90,41 +95,105 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ProductPage() {
+export default function InsurancePage() {
+  const [open, setOpen] = useState(null);
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
 
-  const [orderBy, setOrderBy] = useState('code');
+  const [selected, setSelected] = useState([]);
+
+  const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
-  const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
-
+  const [BILLLIST, setBillList] = useState([]);
+  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
   const [id, setId] = useState('');
+  const columnsPanel = useMemo(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+      },
+      {
+        accessorKey: 'username',
+        header: 'Username',
+      },
+      {
+        accessorKey: 'password',
+        header: 'Password'
+      },
+      {
+        accessorKey: 'role',
+        header: 'Role',
+      },
+      {
+        accessorKey: 'address',
+        header: 'Address',
+      },
+      {
+        accessorKey: 'sdt',
+        header: 'Phone',
+      },
 
+    ],
+    [],
+  );
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/factory/storage/${localStorage.getItem('id')}`);
-        setProductList(res.data);
+        const res = await axios.get(`http://localhost:8000/guarantee/insurancing/${localStorage.getItem('id')}`);
+        setBillList(res.data);
       } catch (err) {
-        console.log(err.message);
+        // console.log('fe : ' + err.message);
       }
     };
     getData();
   }, []);
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
 
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+  };
+  const mapColor = (status) => {
+    return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
+  }
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = BILLLIST.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    }
+    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -142,84 +211,78 @@ export default function ProductPage() {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
+      const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
       );
-
-      window.location.reload();
-
-
+      if (res.data.update) {
+        // window.location.reload();
+        console.log(rowData);
+        alert(res.data.msg);
+      }
     } catch (err) {
       console.log(err.message);
     }
   };
+  const handleDelete = () => {
+    console.log(id);
+    axios.delete(`http://localhost:8000/user/delete/${id}`);
+    window.location.reload();
+  };
 
- 
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
-
-  const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> Import | Minimal UI </title>
+        <title> User | Minimal UI </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Nhập sản phẩm
+            Lịch sử vận chuyển
           </Typography>
         </Stack>
 
         <Card>
-          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+          <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <ProductListHead
+                <TransListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={PRODUCTLIST.length}
+                  rowCount={BILLLIST.length}
+                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
+                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, name, price } = row;
-
+                    const { _id, code, quantity, nameAgency, status, date } = row;
+                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id}>
-                        <TableCell />
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                        <TableCell padding="checkbox"/>
+                          
 
                         <TableCell align='left'>{_id}</TableCell>
 
                         <TableCell align="left">{code}</TableCell>
 
-                        <TableCell align="left">{name}</TableCell>
-
-                        <TableCell align="left">{fCurrency(price)}</TableCell>
 
                         <TableCell align="left">{quantity}</TableCell>
+                        <TableCell align="left">{nameAgency}</TableCell>
+                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="left" >{date}</TableCell>
 
-                        <TableCell align="right">
-                          <Button onClick={(e) => {
-                            setOpenEdit(true)
-                            setId(row._id);
-                            console.log(id);
-                            setRowData(rowData => ({
-                              ...rowData,
-                              _id: row._id,
-                              code: row.code,
-                              idFactory: localStorage.getItem('id'),
-                            }));
-                          }}>
-                            Nhập thêm
-                          </Button>
-                        </TableCell>
+                        <TableCell align="right"/>
+                          
                       </TableRow>
                     );
                   })}
@@ -260,7 +323,7 @@ export default function ProductPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={PRODUCTLIST.length}
+            count={BILLLIST.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -269,62 +332,6 @@ export default function ProductPage() {
         </Card>
       </Container>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={createOpenEdit}
-        onClose={() => setOpenEdit(false)}
-        closeAfterTransition
-      >
-        <Fade in={createOpenEdit}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Thêm sản phẩm vào kho
-            </Typography>
-            <ValidatorForm onSubmit={handleUpdate}>
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={localStorage.getItem('id')}
-                label="Mã kho"
-                variant="standard"
-                color="secondary"
-                disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Mã sản phẩm"
-                variant="standard"
-                color="secondary"
-                value={rowData.code}
-                disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Số lượng"
-                variant="standard"
-                color="secondary"
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    quantity: e.target.value,
-                  }))
-                }}
-              />
-              <Button
-                sx={{ marginTop: '10px' }}
-                variant="contained"
-                fullWidth
-                type="submit"
-              >
-                Thêm
-              </Button>
-            </ValidatorForm>
-          </Box>
-        </Fade>
-      </Modal>
     </>
   );
 }

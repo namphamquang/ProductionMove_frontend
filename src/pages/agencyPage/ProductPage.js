@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 // @mui
 import {
@@ -28,14 +27,10 @@ import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
 
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -44,17 +39,7 @@ import { ProductListHead, ProductListToolbar } from '../../sections/@agency/prod
 // 
 import { fCurrency } from '../../utils/formatNumber';
 // ----------------------------------------------------------------------
-const styleModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: '10px',
-  p: 3,
-};
+
 const TABLE_HEAD = [
   { id: '_id', label: 'id', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
@@ -96,8 +81,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ProductPage() {
-  const [open, setOpen] = useState(null);
-  const [test,setTest] = useState([]);
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -109,41 +92,11 @@ export default function ProductPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [createOpenEdit, setOpenEdit] = useState(false);
   const [PRODUCTLIST, setProductList] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
   const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'code',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Password'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Phone',
-      },
-
-    ],
-    [],
-  );
+ 
 
   useEffect(() => {
     const getData = async () => {
@@ -158,13 +111,7 @@ export default function ProductPage() {
     };
     getData();
   }, []);
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
+ 
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -181,20 +128,7 @@ export default function ProductPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, code) => {
-    const selectedIndex = selected.indexOf(code);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, code);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+ 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -209,23 +143,7 @@ export default function ProductPage() {
     setFilterName(event.target.value);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
-      );
-
-      window.location.reload();
-
-
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-  const handleDelete = () => {
-    console.log(id);
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
-  };
+  
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -334,63 +252,7 @@ export default function ProductPage() {
         </Card>
       </Container>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={createOpenEdit}
-        onClose={() => setOpenEdit(false)}
-        closeAfterTransition
-      >
-        <Fade in={createOpenEdit}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Thêm sản phẩm vào kho
-            </Typography>
-            <ValidatorForm onSubmit={handleUpdate}>
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={localStorage.getItem('id')}
-                label="Mã kho"
-                variant="standard"
-                color="secondary"
-              // disabled
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                value={rowData.code}
-                label="Name"
-                variant="standard"
-                color="secondary"
-              // disable
-              />
-              <TextValidator
-                sx={{ marginTop: '10px' }}
-                fullWidth
-                label="Số lượng"
-                variant="standard"
-                color="secondary"
-                onChange={(e) => {
-                  setRowData(rowData => ({
-                    ...rowData,
-                    quantity: e.target.value,
-                  }))
-                }}
-              />
-              <Button
-                sx={{ marginTop: '10px' }}
-                variant="contained"
-                //      startIcon={<SendIcon />}
-                fullWidth
-                type="submit"
-              >
-                Thêm
-              </Button>
-            </ValidatorForm>
-          </Box>
-        </Fade>
-      </Modal>
+     
     </>
   );
 }

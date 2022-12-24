@@ -60,7 +60,7 @@ const TABLE_HEAD = [
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
   { id: 'quanity', label: 'Số lượng', alignRight: false },
   { id: 'from', label: 'Nguồn hàng', alignRight: false },
-  { id: 'createdAt', label: 'Ngày giao', alignRight: false },
+  { id: 'date', label: 'Ngày giao', alignRight: false },
   { id: '' },
 ];
 
@@ -114,36 +114,7 @@ export default function ImportPage() {
   const [PRODUCTLIST, setProductList] = useState([]);
   const [rowData, setRowData] = useState({ idDelivery:'', code:'', quantity: '', });
   const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'code',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Password'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Phone',
-      },
-
-    ],
-    [],
-  );
+  
 
   useEffect(() => {
     const getData = async () => {
@@ -158,13 +129,7 @@ export default function ImportPage() {
     };
     getData();
   }, []);
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -181,20 +146,7 @@ export default function ImportPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, code) => {
-    const selectedIndex = selected.indexOf(code);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, code);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -234,11 +186,7 @@ export default function ImportPage() {
       console.log(err.message);
     }
   };
-  const handleDelete = () => {
-    console.log(id);
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
-  };
+  
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -260,11 +208,7 @@ export default function ImportPage() {
           <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm sản phẩm
           </Button>
-          <CreateProduct
-            columns={columnsPanel}
-            open={createPanelOpen}
-            onClose={() => setCreatePanelOpen(false)}
-          />
+          
         </Stack>
 
         <Card>
@@ -284,7 +228,7 @@ export default function ImportPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, from, createdAt, updatedAt, _v } = row;
+                    const { _id, code, quantity, from, date } = row;
                     
                       // console.log(test);
                     const selectedUser = selected.indexOf(code) !== -1;
@@ -300,7 +244,7 @@ export default function ImportPage() {
 
                         <TableCell align="left">{from}</TableCell>
 
-                        <TableCell align="left">{createdAt}</TableCell>
+                        <TableCell align="left">{date}</TableCell>
 
                         <TableCell align="right">
                           <Button onClick={() => {

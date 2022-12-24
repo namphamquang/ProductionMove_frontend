@@ -60,7 +60,7 @@ const TABLE_HEAD = [
   { id: 'quantity', label: 'Số lượng', alignRight: false },
   { id: 'to', label: 'Vận chuyển tới', alignRight: false },
   { id: 'status', label: 'Trạng thái', alignRight: false },
-  { id: 'createdAt', label: 'Ngày vận chuyển', alignRight: false },
+  { id: 'date', label: 'Ngày vận chuyển', alignRight: false },
   { id: '' },
 ];
 
@@ -264,7 +264,7 @@ export default function BillPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, to, status, createdAt } = row;
+                    const { _id, code, quantity, to, status, date } = row;
                      const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -279,7 +279,7 @@ export default function BillPage() {
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{to}</TableCell>
                         <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
-                        <TableCell align="left" >{createdAt}</TableCell>
+                        <TableCell align="left" >{date}</TableCell>
 
                         <TableCell align="right"/>
                           

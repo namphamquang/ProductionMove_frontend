@@ -12,6 +12,8 @@ import SellPage from '../pages/agencyPage/SellPage';
 import DashboardAppPage from '../pages/agencyPage/DashboardAppPage';
 import ImportPage from '../pages/agencyPage/ImportPage';
 import BillPage from '../pages/agencyPage/BillPage';
+import ProductCustomerPage from '../pages/agencyPage/ProductCustomerPage';
+import ProductInsurancePage from '../pages/agencyPage/ProductInsurancePage';
 
 export default function AgencyRouter() {
   const routes = useRoutes([
@@ -24,8 +26,9 @@ export default function AgencyRouter() {
         { path: 'product', element: <ProductPage /> },
         { path: 'sell', element: <SellPage /> },
         {path: 'import', element: <ImportPage/>},
-        {path: 'bill', element: <BillPage/>}
-
+        {path: 'bill', element: <BillPage/>},
+        {path: 'product-customers', element: <ProductCustomerPage/> },
+        {path: 'product-insurance', element: <ProductInsurancePage/>}
 
       ],
     },

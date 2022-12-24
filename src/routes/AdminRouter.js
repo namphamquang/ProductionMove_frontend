@@ -4,7 +4,7 @@ import AdminLayout from '../layouts/admin';
 import SimpleLayout from '../layouts/simple';
 
 // ----------------------------------------------------------------------
-import BlogPage from '../pages/adminPage/BlogPage';
+
 import UserPage from '../pages/adminPage/UserPage';
 import LoginPage from '../pages/loginPage/LoginPage';
 import Page404 from '../pages/adminPage/Page404';
@@ -22,7 +22,6 @@ export default function AdminRouter() {
         { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
         {path: 'store', element: <StorePage /> },
       ],
     },

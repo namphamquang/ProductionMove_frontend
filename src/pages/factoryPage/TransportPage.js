@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 // @mui
 import {
@@ -25,17 +24,13 @@ import {
   TablePagination,
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
-// import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
-import moment from 'moment/moment';
 // components
 
 
 
 
 import Label from '../../components/label';
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -43,24 +38,14 @@ import { TransListHead, TransListToolbar } from '../../sections/@factory/transpo
 // mock
 // 
 // ----------------------------------------------------------------------
-const styleModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: '10px',
-  p: 3,
-};
+
 const TABLE_HEAD = [
   { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
   { id: 'quantity', label: 'Số lượng', alignRight: false },
   { id: 'to', label: 'Vận chuyển tới', alignRight: false },
   { id: 'status', label: 'Trạng thái', alignRight: false },
-  { id: 'createdAt', label: 'Ngày vận chuyển', alignRight: false },
+  { id: 'date', label: 'Ngày vận chuyển', alignRight: false },
   { id: '' },
 ];
 
@@ -109,41 +94,10 @@ export default function TransportPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createPanelOpen, setCreatePanelOpen] = useState(false);
-  const [createOpenEdit, setOpenEdit] = useState(false);
   const [BILLLIST, setBillList] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
   const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Password'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Phone',
-      },
-
-    ],
-    [],
-  );
+ 
 
   useEffect(() => {
     const getData = async () => {
@@ -156,13 +110,7 @@ export default function TransportPage() {
     };
     getData();
   }, []);
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -181,20 +129,7 @@ export default function TransportPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -209,25 +144,7 @@ export default function TransportPage() {
     setFilterName(event.target.value);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
-      );
-      if (res.data.update) {
-        // window.location.reload();
-        console.log(rowData);
-        alert(res.data.msg);
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-  const handleDelete = () => {
-    console.log(id);
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
-  };
-
+  
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
   const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
@@ -264,7 +181,7 @@ export default function TransportPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, to, status, createdAt } = row;
+                    const { _id, code, quantity, to, status, date } = row;
                      const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -279,7 +196,7 @@ export default function TransportPage() {
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{to}</TableCell>
                         <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
-                        <TableCell align="left" >{createdAt}</TableCell>
+                        <TableCell align="left" >{date}</TableCell>
 
                         <TableCell align="right"/>
                           

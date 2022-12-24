@@ -31,9 +31,14 @@ const navConfig = [
     icon: icon('ic_lock'),
   },
   {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
+    title: 'Sản phẩm của khách',
+    path: '/agency/product-customers',
+    icon: icon('ic_lock'),
+  },
+  {
+    title: 'Sản phẩm cần bảo hành',
+    path: '/agency/product-insurance',
+    icon: icon('ic_lock'),
   },
 ];
 

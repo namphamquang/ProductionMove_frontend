@@ -13,10 +13,6 @@ import {
     Avatar,
     Button,
     Popover,
-    FormControl,
-    InputLabel,
-    Select,
-    TextField,
     Checkbox,
     TableRow,
     MenuItem,
@@ -29,7 +25,6 @@ import {
     TablePagination,
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
-
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
@@ -37,32 +32,26 @@ import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
+
 
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
-import { ProductListHead, ProductListToolbar } from '../../sections/@agency/product';
+import { TransListHead, TransListToolbar } from '../../sections/@factory/transport';
 // mock
 // 
 // ----------------------------------------------------------------------
-const styleModal = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    borderRadius: '10px',
-    p: 3,
-};
+
 const TABLE_HEAD = [
-    { id: '_id', label: 'id', alignRight: false },
+    { id: '_id', label: 'Mã đơn', alignRight: false },
+    { id: 'nameCustomer', label: 'Khách hàng', alignRight: false },
     { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'quanity', label: 'Số lượng', alignRight: false },
+    { id: 'quantity', label: 'Số lượng', alignRight: false },
+    { id: 'nameGuarantee', label: 'Bảo hành tại', alignRight: false },
+    { id: 'status', label: 'Trạng thái', alignRight: false },
+    { id: 'createdAt', label: 'Ngày bảo hành', alignRight: false },
     { id: '' },
 ];
 
@@ -97,7 +86,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function SellPage() {
+export default function ProductInsurancePage() {
     const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
@@ -106,47 +95,50 @@ export default function SellPage() {
 
     const [selected, setSelected] = useState([]);
 
-    const [orderBy, setOrderBy] = useState('code');
+    const [orderBy, setOrderBy] = useState('name');
 
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [createPanelOpen, setCreatePanelOpen] = useState(false);
     const [createOpenEdit, setOpenEdit] = useState(false);
-    const [PRODUCTLIST, setProductList] = useState([]);
-    const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell:'', nameCustomer: '', address: '', sdt: ''});
+    const [BILLLIST, setBillList] = useState([]);
+    const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
     const [id, setId] = useState('');
-   
+
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/agency/storage/${localStorage.getItem('id')}`);
-                setProductList(res.data);
+                const res = await axios.get(`http://localhost:8000/delivery/atg/${localStorage.getItem('id')}`);
+                setBillList(res.data);
             } catch (err) {
                 // console.log('fe : ' + err.message);
             }
         };
         getData();
     }, []);
-    
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
+    const mapColor = (status) => {
+        return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : 'default';
+    }
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = PRODUCTLIST.map((n) => n.name);
+            const newSelecteds = BILLLIST.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-   
+
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -159,15 +151,18 @@ export default function SellPage() {
         setPage(0);
         setFilterName(event.target.value);
     };
-
-    
-    const handleClickSell = () => {
-        axios.post('http://localhost:8000/agency/sell-product', rowData);
+    const handleReturn = (idBill) => { 
+        const body = {};
+        body.idOrderGuarantee = idBill;
+        console.log(body);
+        axios.post(`http://localhost:8000/agency/submit-atc`, body);
         window.location.reload();
-     }
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
-    const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
+    }
+
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
+
+    const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -180,58 +175,42 @@ export default function SellPage() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Bán sản phẩm
+                        Bảo hành
                     </Typography>
-                   
                 </Stack>
 
                 <Card>
-                    <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <ProductListHead
+                                <TransListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={PRODUCTLIST.length}
+                                    rowCount={BILLLIST.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, idFactory, code, quantity, createdAt, updatedAt, _v } = row;
+                                        const { _id, code, quantity, nameCustomer, nameGuarantee, status, date } = row;
                                         const selectedUser = selected.indexOf(code) !== -1;
                                         return (
                                             <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                                <TableCell />
-
+                                                <TableCell padding="checkbox" />
                                                 <TableCell align='left'>{_id}</TableCell>
-
+                                                <TableCell align='left'>{nameCustomer}</TableCell>
                                                 <TableCell align="left">{code}</TableCell>
-
-
                                                 <TableCell align="left">{quantity}</TableCell>
-
-
-
-                                                <TableCell align="right">
-                                                    <Button onClick={(e) => {
-                                                        setOpenEdit(true);
-                                                        setId(row._id);
-                                                        setRowData(rowData => ({
-                                                            ...rowData,
-                                                            _id: row._id,
-                                                            idAgency: localStorage.getItem('id'),
-                                                            code: row.code,
-                                                            quantity: row.quantity,
-                                                        }));
-                                                    }}>
-                                                        Bán
-                                                    </Button>
-                                                </TableCell>
+                                                <TableCell align="left">{nameGuarantee}</TableCell>
+                                                {(status === 'Đang vận chuyển' || status === 'Đang bảo hành' || status === 'Khách đã nhận') &&
+                                                    (<TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>)}
+                                                {(status !== 'Đang vận chuyển' && status !== 'Đang bảo hành' && status !== 'Khách đã nhận') &&
+                                                    (<TableCell align="center"><Button onClick={() => {handleReturn(_id);}} sx={{ fontSize: 12, p: 0.5}} variant="contained">Giao cho khách</Button></TableCell>)}
+                                                <TableCell align="left" >{date}</TableCell>
                                             </TableRow>
                                         );
                                     })}
@@ -272,7 +251,7 @@ export default function SellPage() {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={PRODUCTLIST.length}
+                        count={BILLLIST.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -281,92 +260,6 @@ export default function SellPage() {
                 </Card>
             </Container>
 
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={createOpenEdit}
-                onClose={() => setOpenEdit(false)}
-                closeAfterTransition
-            >
-                <Fade in={createOpenEdit}>
-                    <Box sx={styleModal}>
-                        <Typography id="transition-modal-title" variant="h6" component="h2">
-                            Nhập thông tin đơn hàng
-                        </Typography>
-                        
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Tên khách hàng"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    nameCustomer: e.target.value,
-                                }))
-                            }}                        
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Địa chỉ"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    address: e.target.value,
-                                }))
-                            }}
-                        />
-                       <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Số điện thoại"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    sdt: e.target.value,
-                                }))
-                            }}                        
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Mã sản phẩm"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            value={rowData.code}  
-                            disabled                    
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Số lượng"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    quantitySell: e.target.value,
-                                }))
-                            }}                        
-                        />
-                        <Button
-                            sx={{ marginTop: '10px' }}
-                            variant="contained"
-                            fullWidth
-                            type="submit"
-                            onClick={handleClickSell}
-                        >
-                            Giao hàng
-                        </Button>
-                    </Box>
-                </Fade>
-            </Modal>
         </>
     );
 }

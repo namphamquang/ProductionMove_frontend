@@ -13,10 +13,6 @@ import {
     Avatar,
     Button,
     Popover,
-    FormControl,
-    InputLabel,
-    Select,
-    TextField,
     Checkbox,
     TableRow,
     MenuItem,
@@ -27,9 +23,12 @@ import {
     IconButton,
     TableContainer,
     TablePagination,
+    FormControl,
+    InputLabel,
+    Select,
+    TextField
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
-
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
@@ -37,14 +36,14 @@ import moment from 'moment/moment';
 // components
 
 
-import CreateProduct from '../../sections/@agency/product/CreateProduct';
+
 
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
-import { ProductListHead, ProductListToolbar } from '../../sections/@agency/product';
+import { TransListHead, TransListToolbar } from '../../sections/@factory/transport';
 // mock
 // 
 // ----------------------------------------------------------------------
@@ -60,9 +59,11 @@ const styleModal = {
     p: 3,
 };
 const TABLE_HEAD = [
-    { id: '_id', label: 'id', alignRight: false },
+    { id: 'id', label: 'Mã đơn', alignRight: false },
     { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'quanity', label: 'Số lượng', alignRight: false },
+    { id: 'quantity', label: 'Số lượng', alignRight: false },
+    { id: 'idCustomer', label: 'ID khách hàng', alignRight: false },
+    { id: 'createdAt', label: 'Ngày mua', alignRight: false },
     { id: '' },
 ];
 
@@ -97,7 +98,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function SellPage() {
+export default function ProductCustomerPage() {
     const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
@@ -106,47 +107,67 @@ export default function SellPage() {
 
     const [selected, setSelected] = useState([]);
 
-    const [orderBy, setOrderBy] = useState('code');
+    const [orderBy, setOrderBy] = useState('name');
 
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [createPanelOpen, setCreatePanelOpen] = useState(false);
     const [createOpenEdit, setOpenEdit] = useState(false);
-    const [PRODUCTLIST, setProductList] = useState([]);
-    const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell:'', nameCustomer: '', address: '', sdt: ''});
+    const [BILLLIST, setBillList] = useState([]);
+    const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
     const [id, setId] = useState('');
-   
+    const [guarantee, setGuarantee] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/agency/storage/${localStorage.getItem('id')}`);
-                setProductList(res.data);
+                const res = await axios.get(`http://localhost:8000/agency/product-customers/${localStorage.getItem('id')}`);
+                setBillList(res.data);
             } catch (err) {
                 // console.log('fe : ' + err.message);
             }
         };
         getData();
     }, []);
-    
+
+    useEffect(() => {
+        const getGuarantee = async () => {
+            try {
+                const res = await axios.get(`http://localhost:8000/guarantee`);
+                setGuarantee(res.data);
+                console.log(res.data);
+            } catch (err) {
+                console.log(err.message);
+            }
+        };
+        getGuarantee();
+    }, []);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
+    const mapColor = (status) => {
+        return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
+    }
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = PRODUCTLIST.map((n) => n.name);
+            const newSelecteds = BILLLIST.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-   
+    const handleOpenMenu = (event) => {
+        setOpen(event.currentTarget);
+    };
+    const handleCloseMenu = () => {
+        setOpen(null);
+    };
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -160,14 +181,13 @@ export default function SellPage() {
         setFilterName(event.target.value);
     };
 
-    
-    const handleClickSell = () => {
-        axios.post('http://localhost:8000/agency/sell-product', rowData);
+    const handleInsurance = () => {
+        axios.post(`http://localhost:8000/agency/order-guarantee`, rowData);
         window.location.reload();
-     }
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
+    }
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
-    const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -180,33 +200,33 @@ export default function SellPage() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Bán sản phẩm
+                        Lịch sử vận chuyển
                     </Typography>
-                   
                 </Stack>
 
                 <Card>
-                    <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <ProductListHead
+                                <TransListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={PRODUCTLIST.length}
+                                    rowCount={BILLLIST.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, idFactory, code, quantity, createdAt, updatedAt, _v } = row;
+                                        const { _id, code, idCustomer, quantity , createdAt } = row;
                                         const selectedUser = selected.indexOf(code) !== -1;
                                         return (
                                             <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                                <TableCell />
+                                                <TableCell padding="checkbox" />
+
 
                                                 <TableCell align='left'>{_id}</TableCell>
 
@@ -214,24 +234,23 @@ export default function SellPage() {
 
 
                                                 <TableCell align="left">{quantity}</TableCell>
-
-
-
+                                                <TableCell align="left">{idCustomer}</TableCell>
+                                                <TableCell align="left" >{createdAt}</TableCell>
                                                 <TableCell align="right">
-                                                    <Button onClick={(e) => {
-                                                        setOpenEdit(true);
-                                                        setId(row._id);
+                                                    <IconButton size="large" color="inherit" onClick={(e) => {
                                                         setRowData(rowData => ({
                                                             ...rowData,
-                                                            _id: row._id,
-                                                            idAgency: localStorage.getItem('id'),
-                                                            code: row.code,
-                                                            quantity: row.quantity,
-                                                        }));
+                                                            idDelivery: row._id,
+                                                          }));
+                                                          console.log(rowData);
+                                                        handleOpenMenu(e);
+                                                        
                                                     }}>
-                                                        Bán
-                                                    </Button>
+                                                        <Iconify icon={'eva:more-vertical-fill'} />
+                                                    </IconButton>
                                                 </TableCell>
+                                                <TableCell align="right" />
+
                                             </TableRow>
                                         );
                                     })}
@@ -272,7 +291,7 @@ export default function SellPage() {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={PRODUCTLIST.length}
+                        count={BILLLIST.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -280,7 +299,35 @@ export default function SellPage() {
                     />
                 </Card>
             </Container>
+            <Popover
+                open={Boolean(open)}
+                anchorEl={open}
+                onClose={handleCloseMenu}
+                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                PaperProps={{
+                    sx: {
+                        p: 1,
+                        width: 140,
+                        '& .MuiMenuItem-root': {
+                            px: 1,
+                            typography: 'body2',
+                            borderRadius: 0.75,
+                        },
+                    },
+                }}
+            >
+                <MenuItem onClick={() => { setOpenEdit(true) }}>
+                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                    Bảo hành
+                </MenuItem>
+                <MenuItem sx={{ color: 'error.main' }}>
+                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+                    Thu hồi
+                </MenuItem>
 
+
+            </Popover>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -291,76 +338,73 @@ export default function SellPage() {
                 <Fade in={createOpenEdit}>
                     <Box sx={styleModal}>
                         <Typography id="transition-modal-title" variant="h6" component="h2">
-                            Nhập thông tin đơn hàng
+                            Bảo hành
                         </Typography>
-                        
                         <TextField
                             sx={{ margin: '15px 0' }}
-                            label="Tên khách hàng"
+                            label="Mã đơn hàng "
                             variant="standard"
+                            value={rowData.idDelivery}
                             fullWidth
                             type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    nameCustomer: e.target.value,
-                                }))
-                            }}                        
+                            disabled
+                            
                         />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Địa chỉ"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    address: e.target.value,
-                                }))
-                            }}
-                        />
-                       <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Số điện thoại"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    sdt: e.target.value,
-                                }))
-                            }}                        
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Mã sản phẩm"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            value={rowData.code}  
-                            disabled                    
-                        />
+                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                            <InputLabel id="demo-simple-select-label">Trung tâm bảo hành</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Age"
+                                onChange={(e) => {
+                                    setRowData(rowData => ({
+                                        ...rowData,
+                                        idGuarantee: e.target.value,
+                                    }))
+                                }}
+                            >
+                                {(guarantee).map((row1) => {
+                                    const { _id, name } = row1;
+                                    return (
+                                        <MenuItem key={_id} value={_id}>{name}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
                         <TextField
                             sx={{ margin: '15px 0' }}
                             label="Số lượng"
                             variant="standard"
                             fullWidth
+                            type="text" 
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    quantity: e.target.value,
+                                }))
+                            }}
+                        />
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Mô tả "
+                            variant="standard"
+                            fullWidth
                             type="text"
                             onChange={(e) => {
                                 setRowData(rowData => ({
                                     ...rowData,
-                                    quantitySell: e.target.value,
+                                    description: e.target.value,
                                 }))
-                            }}                        
+                            }}
+                            
                         />
+
                         <Button
                             sx={{ marginTop: '10px' }}
                             variant="contained"
                             fullWidth
                             type="submit"
-                            onClick={handleClickSell}
+                            onClick={handleInsurance}
                         >
                             Giao hàng
                         </Button>
