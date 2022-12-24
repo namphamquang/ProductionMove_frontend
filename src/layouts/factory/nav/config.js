@@ -14,17 +14,17 @@ const navConfig = [
   {
     title: 'Nhập sản phẩm',
     path: '/factory/user',
-    icon: icon('ic_user'),
+    icon: icon('ic_import'),
   },
   {
     title: 'Xuất sản phẩm',
     path: '/factory/export',
-    icon: icon('ic_user'),
+    icon: icon('ic_export'),
   },
   {
     title: 'Vận chuyển',
     path: '/factory/transport',
-    icon: icon('ic_lock'),
+    icon: icon('ic_transport'),
   }
 ];
 

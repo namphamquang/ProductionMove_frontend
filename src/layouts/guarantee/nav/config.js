@@ -14,12 +14,12 @@ const navConfig = [
   {
     title: 'Tiếp nhận sản phẩm',
     path: '/guarantee/receive',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_import'),
   },
   {
     title: 'Đang bảo hành',
     path: '/guarantee/insurancing',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_insurance'),
   },
   
 ];

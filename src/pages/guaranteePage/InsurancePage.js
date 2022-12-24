@@ -286,12 +286,12 @@ export default function InsurancePage() {
         }}
       >
         <MenuItem onClick={() => { setOpenEdit(true) }}>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify icon={'material-symbols:keyboard-return'} sx={{ mr: 2 }} />
           Trả lại đại lý
         </MenuItem>
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Trả về nơi sản xuất
+        <MenuItem >
+          <Iconify icon={'ph:key-return-light'} sx={{ mr: 2 }} />
+          Trả về CSSX
         </MenuItem>
       </Popover>
       <Modal

@@ -19,7 +19,7 @@ const navConfig = [
   {
     title: 'Quản lý kho',
     path: '/admin/store',
-    icon: icon('ic_user'),
+    icon: icon('ic_building'),
   },
   {
     title: 'Dòng sản phẩm',

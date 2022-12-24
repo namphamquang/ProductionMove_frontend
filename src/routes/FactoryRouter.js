@@ -34,7 +34,7 @@ export default function FactoryRouter() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/factory/app" />, index: true },
+        { element: <Navigate to="/factory/dashboard" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
