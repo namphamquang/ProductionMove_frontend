@@ -63,7 +63,7 @@ const TABLE_HEAD = [
     { id: 'code', label: 'Mã sản phẩm', alignRight: false },
     { id: 'quantity', label: 'Số lượng', alignRight: false },
     { id: 'idCustomer', label: 'ID khách hàng', alignRight: false },
-    { id: 'createdAt', label: 'Ngày mua', alignRight: false },
+    { id: 'date', label: 'Ngày mua', alignRight: false },
     { id: '' },
 ];
 
@@ -221,7 +221,7 @@ export default function ProductCustomerPage() {
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, code, idCustomer, quantity , createdAt } = row;
+                                        const { _id, code, idCustomer, quantity , date } = row;
                                         const selectedUser = selected.indexOf(code) !== -1;
                                         return (
                                             <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -229,13 +229,10 @@ export default function ProductCustomerPage() {
 
 
                                                 <TableCell align='left'>{_id}</TableCell>
-
                                                 <TableCell align="left">{code}</TableCell>
-
-
                                                 <TableCell align="left">{quantity}</TableCell>
                                                 <TableCell align="left">{idCustomer}</TableCell>
-                                                <TableCell align="left" >{createdAt}</TableCell>
+                                                <TableCell align="left" >{date}</TableCell>
                                                 <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={(e) => {
                                                         setRowData(rowData => ({
