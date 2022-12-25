@@ -6,6 +6,15 @@ import {
   Card,
   Table,
   Stack,
+  Button,
+  Select,
+  InputLabel,
+  FormControl,
+  MenuItem,
+  Box,
+  TextField,
+  Modal,
+  Fade,
   Paper,
   TableRow,
   TableBody,
@@ -29,6 +38,18 @@ import { ProductListHead, ProductListToolbar } from '../../sections/@agency/prod
 // 
 import { fCurrency } from '../../utils/formatNumber';
 // ----------------------------------------------------------------------
+
+const styleModal = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 500,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  borderRadius: '10px',
+  p: 3,
+};
 
 const TABLE_HEAD = [
   { id: '_id', label: 'id', alignRight: false },
@@ -82,8 +103,13 @@ export default function ProductPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [PRODUCTLIST, setProductList] = useState([]);
 
+  const [factory, setFactory] = useState([]);
+
+  const [createOpenEdit, setOpenEdit] = useState();
+  const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), code: '', quantity: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
@@ -99,6 +125,18 @@ export default function ProductPage() {
     getData();
   }, []);
 
+  useEffect(() => {
+    const getFactory = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8000/factory`);
+            setFactory(res.data);
+            console.log(res.data);
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+    getFactory();
+}, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -120,7 +158,10 @@ export default function ProductPage() {
     setFilterName(event.target.value);
   };
 
-
+  const handleClickReturn = () => {
+    axios.post(`http://localhost:8000/agency/submit-atf`, rowData);
+    window.location.reload();
+  }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -175,9 +216,13 @@ export default function ProductPage() {
 
                         <TableCell align="left">{quantity}</TableCell>
 
-                        <TableCell align="right" />
-
-
+                        <TableCell align='left'><Button onClick={(e) => {
+                                    setRowData(rowData => ({
+                                        ...rowData,
+                                        code: row.code,
+                                    }));
+                                    setOpenEdit(true);
+                                }}>Trả về CSSX</Button></TableCell>
                       </TableRow>
                     );
                   })}
@@ -226,8 +271,74 @@ export default function ProductPage() {
           />
         </Card>
       </Container>
+      <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={createOpenEdit}
+                onClose={() => setOpenEdit(false)}
+                closeAfterTransition
+            >
+                <Fade in={createOpenEdit}>
+                    <Box sx={styleModal}>
+                        <Typography id="transition-modal-title" variant="h6" component="h2">
+                            Nhập thông tin vận chuyển
+                        </Typography>
+                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                            <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Factory"
+                                onChange={(e) => {
+                                    setRowData(rowData => ({
+                                        ...rowData,
+                                        idFactory: e.target.value,
+                                    }))
+                                }}
+                            >
+                                {(factory).map((row) => {
+                                    const { _id, name } = row;
+                                    return (
+                                        <MenuItem key={_id} value={_id}>{name}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Mã sản phẩm"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            value={rowData.code}
+                            disabled
+                        />
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Số lượng"
+                            variant="standard"
+                            fullWidth
+                            type="number"
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    quantity: e.target.value,
+                                }))
+                            }}
+                        />
 
-
+                        <Button
+                            sx={{ marginTop: '10px' }}
+                            variant="contained"
+                            fullWidth
+                            type="submit"
+                            onClick={handleClickReturn}
+                        >
+                            Trả lại
+                        </Button>
+                    </Box>
+                </Fade>
+            </Modal>
     </>
   );
 }

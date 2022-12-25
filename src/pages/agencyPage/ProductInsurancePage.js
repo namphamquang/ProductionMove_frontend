@@ -30,13 +30,13 @@ import { TransListHead, TransListToolbar } from '../../sections/@factory/transpo
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: '_id', label: 'Mã đơn', alignRight: false },
-    { id: 'nameCustomer', label: 'Khách hàng', alignRight: false },
-    { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'quantity', label: 'Số lượng', alignRight: false },
-    { id: 'nameGuarantee', label: 'Bảo hành tại', alignRight: false },
+    { id: '_id', label: 'Mã đơn', alignRight: true },
+    { id: 'nameCustomer', label: 'Khách hàng', alignRight: true },
+    { id: 'code', label: 'Mã sản phẩm', alignRight: true },
+    { id: 'quantity', label: 'Số lượng', alignRight: true },
+    { id: 'nameGuarantee', label: 'Bảo hành tại', alignRight: true },
+    { id: 'createdAt', label: 'Ngày bảo hành', alignRight: true },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: 'createdAt', label: 'Ngày bảo hành', alignRight: false },
     { id: '' },
 ];
 
@@ -106,7 +106,7 @@ export default function ProductInsurancePage() {
         setOrderBy(property);
     };
     const mapColor = (status) => {
-        return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : 'default';
+        return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : (status === "Lỗi-Không sửa được") ? 'error': 'default';
     }
 
 
@@ -179,11 +179,12 @@ export default function ProductInsurancePage() {
                                                 <TableCell align="left">{code}</TableCell>
                                                 <TableCell align="left">{quantity}</TableCell>
                                                 <TableCell align="left">{nameGuarantee}</TableCell>
-                                                {(status === 'Đang vận chuyển' || status === 'Đang bảo hành' || status === 'Khách đã nhận') &&
-                                                    (<TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>)}
-                                                {(status !== 'Đang vận chuyển' && status !== 'Đang bảo hành' && status !== 'Khách đã nhận') &&
-                                                    (<TableCell align="center"><Button onClick={() => { handleReturn(_id); }} sx={{ fontSize: 12, p: 0.5 }} variant="contained">Giao cho khách</Button></TableCell>)}
                                                 <TableCell align="left" >{date}</TableCell>
+                                                {(status === 'Đang vận chuyển' || status === 'Đang bảo hành' || status === 'Khách đã nhận' || status === 'Lỗi-Không sửa được') &&
+                                                    (<TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>)}
+                                                {(status !== 'Đang vận chuyển' && status !== 'Đang bảo hành' && status !== 'Khách đã nhận' && status !== 'Lỗi-Không sửa được') &&
+                                                    (<TableCell align="center"><Button onClick={() => { handleReturn(_id); }} sx={{ fontSize: 12, p: 0.5 }} variant="contained">Giao cho khách</Button></TableCell>)}
+                                                
                                             </TableRow>
                                         );
                                     })}

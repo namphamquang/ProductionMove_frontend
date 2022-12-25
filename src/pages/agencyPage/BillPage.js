@@ -31,12 +31,12 @@ import { TransListHead, TransListToolbar } from '../../sections/@factory/transpo
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Mã đơn', alignRight: false },
-  { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-  { id: 'quantity', label: 'Số lượng', alignRight: false },
-  { id: 'to', label: 'Vận chuyển tới', alignRight: false },
+  { id: 'id', label: 'Mã đơn', alignRight: true },
+  { id: 'code', label: 'Mã sản phẩm', alignRight:true },
+  { id: 'quantity', label: 'Số lượng', alignRight:true },
+  { id: 'to', label: 'Vận chuyển tới', alignRight:true },
   { id: 'status', label: 'Trạng thái', alignRight: false },
-  { id: 'date', label: 'Ngày vận chuyển', alignRight: false },
+  { id: 'date', label: 'Ngày vận chuyển', alignRight: true },
   { id: '' },
 ];
 
@@ -108,7 +108,7 @@ export default function BillPage() {
     setOrderBy(property);
   };
   const mapColor = (status) => {
-    return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
+    return (status === "Đang vận chuyển") ? 'warning' : (status === "Đã trả nhà máy") ? 'success' : 'default';
   }
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -180,7 +180,7 @@ export default function BillPage() {
                         <TableCell align="left">{code}</TableCell>
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{to}</TableCell>
-                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="center"><Label color= {mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
                         <TableCell align="right"/>
                           

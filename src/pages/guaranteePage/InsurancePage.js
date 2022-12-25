@@ -12,6 +12,9 @@ import {
   Button,
   Popover,
   TableRow,
+  FormControl,
+  InputLabel,
+  Select,
   MenuItem,
   TableBody,
   TableCell,
@@ -52,7 +55,7 @@ const TABLE_HEAD = [
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
   { id: 'quantity', label: 'Số lượng', alignRight: false },
   { id: 'nameAgency', label: 'Nhận từ', alignRight: false },
-  { id: 'status', label: 'Trạng thái', alignRight: false },
+  { id: 'status', label: 'Trạng thái', alignRight: true },
   { id: 'date', label: 'Ngày bảo hành', alignRight: false },
   { id: '' },
 ];
@@ -103,8 +106,11 @@ export default function InsurancePage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [createOpenEdit, setOpenEdit] = useState(false);
+  const [createOpenEdit2, setOpenEdit2] = useState(false);
   const [BILLLIST, setBillList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '', idOrderGuarantee: '' });
+  const [factory, setFactory] = useState([]);
+  const [rowData, setRowData] = useState({ _id: '', idOrderGuarantee: '' });
+  const [rowData1, setRowData1] = useState({ idGuarantee: localStorage.getItem('id'),  code: '', quantity: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
@@ -120,6 +126,18 @@ export default function InsurancePage() {
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
+  useEffect(() => {
+    const getFactory = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/factory`);
+        setFactory(res.data);
+        console.log(res.data);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    getFactory();
+  }, []);
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -152,6 +170,11 @@ export default function InsurancePage() {
   const handleReturnAgency = () => {
     axios.post(`http://localhost:8000/guarantee/submit-gta`, rowData);
     window.location.reload();
+  }
+  const handleReturnFactory = () => {
+    axios.post(`http://localhost:8000/guarantee/submit-gtf`, rowData1);
+    console.log(rowData1);
+    // window.location.reload();
   }
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
@@ -193,24 +216,26 @@ export default function InsurancePage() {
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox" />
 
-
                         <TableCell align='left'>{_id}</TableCell>
-
                         <TableCell align="left">{code}</TableCell>
-
-
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{nameAgency}</TableCell>
-                        <TableCell align="left"><Label color={mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
-
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(e) => {
                             setRowData(rowData => ({
                               ...rowData,
                               idOrderGuarantee: row._id,
+                              code: row.code
                             }));
                             console.log(rowData);
+                            setRowData1(rowData1 => ({
+                              ...rowData1,
+                              idOrderGuarantee: row._id,
+                              code: row.code
+                            }));
+                            console.log(rowData1);
                             handleOpenMenu(e);
 
                           }}>
@@ -289,7 +314,7 @@ export default function InsurancePage() {
           <Iconify icon={'material-symbols:keyboard-return'} sx={{ mr: 2 }} />
           Trả lại đại lý
         </MenuItem>
-        <MenuItem >
+        <MenuItem onClick={() => { setOpenEdit2(true)}}>
           <Iconify icon={'ph:key-return-light'} sx={{ mr: 2 }} />
           Trả về CSSX
         </MenuItem>
@@ -323,6 +348,74 @@ export default function InsurancePage() {
               fullWidth
               type="submit"
               onClick={handleReturnAgency}
+            >
+              Trả lại
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createOpenEdit2}
+        onClose={() => setOpenEdit2(false)}
+        closeAfterTransition
+      >
+        <Fade in={createOpenEdit2}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Nhập thông tin vận chuyển
+            </Typography>
+            <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+              <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Factory"
+                onChange={(e) => {
+                  setRowData1(rowData1 => ({
+                    ...rowData1,
+                    idFactory: e.target.value,
+                  }))
+                }}
+              >
+                {(factory).map((row) => {
+                  const { _id, name } = row;
+                  return (
+                    <MenuItem key={_id} value={_id}>{name}</MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <TextField
+              sx={{ margin: '15px 0' }}
+              label="Mã sản phẩm"
+              variant="standard"
+              fullWidth
+              type="text"
+              value={rowData1.code}
+              disabled
+            />
+            <TextField
+              sx={{ margin: '15px 0' }}
+              label="Số lượng"
+              variant="standard"
+              fullWidth
+              type="number"
+              onChange={(e) => {
+                setRowData1(rowData1 => ({
+                  ...rowData1,
+                  quantity: e.target.value,
+                }))
+              }}
+            />
+
+            <Button
+              sx={{ marginTop: '10px' }}
+              variant="contained"
+              fullWidth
+              type="submit"
+              onClick={handleReturnFactory}
             >
               Trả lại
             </Button>

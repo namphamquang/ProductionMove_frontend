@@ -25,6 +25,11 @@ const navConfig = [
     title: 'Vận chuyển',
     path: '/factory/transport',
     icon: icon('ic_transport'),
+  },
+  {
+    title: 'Sản phẩm lỗi',
+    path: '/factory/error',
+    icon: icon('ic_error'),
   }
 ];
 

@@ -31,9 +31,11 @@ import axios from 'axios';
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
+import Label from '../../components/label/Label';
 // sections
 
 import { TransListHead, TransListToolbar } from '../../sections/@factory/transport';
+
 // mock
 // 
 // ----------------------------------------------------------------------
@@ -49,11 +51,12 @@ const styleModal = {
     p: 3,
 };
 const TABLE_HEAD = [
-    { id: 'id', label: 'Mã đơn', alignRight: false },
-    { id: 'code', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'quantity', label: 'Số lượng', alignRight: false },
-    { id: 'nameCustomer', label: 'Khách hàng', alignRight: false },
-    { id: 'date', label: 'Ngày mua', alignRight: false },
+    { id: 'id', label: 'Mã đơn', alignRight: true },
+    { id: 'code', label: 'Mã sản phẩm', alignRight: true },
+    { id: 'quantity', label: 'Số lượng', alignRight: true },
+    { id: 'nameCustomer', label: 'Khách hàng', alignRight: true },
+    { id: 'date', label: 'Hạn bảo hành', alignRight: true },
+    { id: 'status', label: 'Trạng thái', alignRigt: false },
     { id: '' },
 ];
 
@@ -103,6 +106,7 @@ export default function ProductCustomerPage() {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [createOpenEdit, setOpenEdit] = useState(false);
+    const [createOpenEdit2, setOpenEdit2] = useState(false);
     const [BILLLIST, setBillList] = useState([]);
     const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
     const [guarantee, setGuarantee] = useState([]);
@@ -154,6 +158,7 @@ export default function ProductCustomerPage() {
     };
     const handleCloseMenu = () => {
         setOpen(null);
+        setOpenEdit2(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -209,27 +214,35 @@ export default function ProductCustomerPage() {
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, code, nameCustomer, quantity, date } = row;
+                                        const { _id, code, nameCustomer, quantity, date, isExpired } = row;
                                         const selectedUser = selected.indexOf(code) !== -1;
                                         return (
                                             <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                                                 <TableCell padding="checkbox" />
-
-
                                                 <TableCell align='left'>{_id}</TableCell>
                                                 <TableCell align="left">{code}</TableCell>
                                                 <TableCell align="left">{quantity}</TableCell>
                                                 <TableCell align="left">{nameCustomer}</TableCell>
                                                 <TableCell align="left" >{date}</TableCell>
+                                                {isExpired === true &&
+                                                    (<TableCell align="center"><Label>Hết hạn bảo hành</Label></TableCell>)}
+                                                {isExpired === false &&
+                                                    (<TableCell align="center"><Button onClick={(e) => {
+                                                        setRowData(rowData => ({
+                                                            ...rowData,
+                                                            idDelivery: _id,
+                                                        }));
+                                                        setOpenEdit(true);
+                                                    }} variant='outlined'>Bảo hành</Button></TableCell>)}
                                                 <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={(e) => {
                                                         setRowData(rowData => ({
                                                             ...rowData,
-                                                            idDelivery: row._id,
+                                                            idDelivery: _id,
+                                                            quantity: row.quantity,
                                                         }));
                                                         console.log(rowData);
                                                         handleOpenMenu(e);
-
                                                     }}>
                                                         <Iconify icon={'eva:more-vertical-fill'} />
                                                     </IconButton>
@@ -302,13 +315,9 @@ export default function ProductCustomerPage() {
                     },
                 }}
             >
-                <MenuItem onClick={() => { setOpenEdit(true) }}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Bảo hành
-                </MenuItem>
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Thu hồi
+                <MenuItem onClick={(e) => { setOpenEdit2(true) }}>
+                    <Iconify icon={'bi:arrow-return-left'} sx={{ mr: 2 }} />
+                    Triệu hồi
                 </MenuItem>
             </Popover>
             <Modal
@@ -390,6 +399,88 @@ export default function ProductCustomerPage() {
                             onClick={handleInsurance}
                         >
                             Giao hàng
+                        </Button>
+                    </Box>
+                </Fade>
+            </Modal>
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={createOpenEdit2}
+                onClose={() => {
+                    setOpenEdit(false);
+                    handleCloseMenu();
+                }}
+                closeAfterTransition
+            >
+                <Fade in={createOpenEdit2}>
+                    <Box sx={styleModal}>
+                        <Typography id="transition-modal-title" variant="h6" component="h2">
+                            Triệu hồi
+                        </Typography>
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Mã đơn hàng "
+                            variant="standard"
+                            value={rowData.idDelivery}
+                            fullWidth
+                            type="text"
+                            disabled
+
+                        />
+                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                            <InputLabel id="demo-simple-select-label">Trung tâm bảo hành</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Age"
+                                onChange={(e) => {
+                                    setRowData(rowData => ({
+                                        ...rowData,
+                                        idGuarantee: e.target.value,
+                                    }))
+                                }}
+                            >
+                                {(guarantee).map((row1) => {
+                                    const { _id, name } = row1;
+                                    return (
+                                        <MenuItem key={_id} value={_id}>{name}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Số lượng"
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            value={rowData.quantity}
+                            disabled
+                        />
+                        <TextField
+                            sx={{ margin: '15px 0' }}
+                            label="Mô tả "
+                            variant="standard"
+                            fullWidth
+                            type="text"
+                            onChange={(e) => {
+                                setRowData(rowData => ({
+                                    ...rowData,
+                                    description: e.target.value,
+                                }))
+                            }}
+
+                        />
+
+                        <Button
+                            sx={{ marginTop: '10px' }}
+                            variant="contained"
+                            fullWidth
+                            type="submit"
+                            onClick={handleInsurance}
+                        >
+                            Gửi tới trung tâm bảo hành
                         </Button>
                     </Box>
                 </Fade>

@@ -11,6 +11,7 @@ import Page404 from '../pages/factoryPage/Page404';
 import ExportPage from '../pages/factoryPage/ExportPage';
 import DashboardAppPage from '../pages/factoryPage/DashboardAppPage';
 import TransportPage from '../pages/factoryPage/TransportPage';
+import ProductErrorPage from '../pages/factoryPage/ProductErrorPage';
 
 export default function FactoryRouter() {
   const routes = useRoutes([
@@ -22,8 +23,8 @@ export default function FactoryRouter() {
         { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <ProductPage /> },
         { path: 'export', element: <ExportPage /> },
-        { path: 'transport', element: <TransportPage /> }
-
+        { path: 'transport', element: <TransportPage /> },
+        { path: 'error', element: <ProductErrorPage /> }
 
       ],
     },

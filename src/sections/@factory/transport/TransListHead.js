@@ -48,7 +48,7 @@ export default function TransListHead({
         {headLabel.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.alignRight ? 'right' : 'left'}
+            align={headCell.alignRight ? 'left' : 'center'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel

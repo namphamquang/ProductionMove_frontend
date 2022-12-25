@@ -1,36 +1,27 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
-  Box,
   Card,
   Table,
-  Modal,
   Stack,
   Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
+// import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
 // components
 
 
-
-
 import Label from '../../components/label';
+
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -40,12 +31,11 @@ import { TransListHead, TransListToolbar } from '../../sections/@factory/transpo
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Mã đơn', alignRight: true },
   { id: 'code', label: 'Mã sản phẩm', alignRight: true },
   { id: 'quantity', label: 'Số lượng', alignRight: true },
-  { id: 'to', label: 'Vận chuyển tới', alignRight: true },
-  { id: 'status', label: 'Trạng thái', alignRight: false },
-  { id: 'date', label: 'Ngày vận chuyển', alignRight: true },
+  { id: 'nameGuarantee', label: 'Nhận từ', alignRight: true },
+  { id: 'status', label: 'Trạng thái', alignRight: true },
+  { id: 'date', label: 'Ngày nhận', alignRight: true },
   { id: '' },
 ];
 
@@ -80,8 +70,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function TransportPage() {
-  const [open, setOpen] = useState(null);
+export default function ProductErrorPage() {
 
   const [page, setPage] = useState(0);
 
@@ -94,15 +83,15 @@ export default function TransportPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [BILLLIST, setBillList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
-  const [id, setId] = useState('');
- 
+
+  
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/delivery/fta/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/factory/error-product/${localStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
         // console.log('fe : ' + err.message);
@@ -110,7 +99,7 @@ export default function TransportPage() {
     };
     getData();
   }, []);
-  
+ 
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -118,7 +107,7 @@ export default function TransportPage() {
     setOrderBy(property);
   };
   const mapColor = (status) => {
-    return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'error';
+    return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
   }
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -128,8 +117,6 @@ export default function TransportPage() {
     }
     setSelected([]);
   };
-
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -145,6 +132,7 @@ export default function TransportPage() {
   };
 
   
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
   const filteredUsers = applySortFilter(BILLLIST, getComparator(order, orderBy), filterName);
@@ -160,7 +148,7 @@ export default function TransportPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Lịch sử vận chuyển
+            Tiếp nhận sản phẩm lỗi
           </Typography>
         </Stack>
 
@@ -181,23 +169,16 @@ export default function TransportPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, to, status, date } = row;
+                    const { _id, code, quantity, nameGuarantee, status, date } = row;
                      const selectedUser = selected.indexOf(code) !== -1;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox"/>
-                          
-
-                        <TableCell align='left'>{_id}</TableCell>
-
                         <TableCell align="left">{code}</TableCell>
-
-
                         <TableCell align="left">{quantity}</TableCell>
-                        <TableCell align="left">{to}</TableCell>
+                        <TableCell align="left">{nameGuarantee}</TableCell>
                         <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
-
                         <TableCell align="right"/>
                           
                       </TableRow>
@@ -248,7 +229,6 @@ export default function TransportPage() {
           />
         </Card>
       </Container>
-
     </>
   );
 }
