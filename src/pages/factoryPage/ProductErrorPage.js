@@ -34,7 +34,7 @@ const TABLE_HEAD = [
   { id: 'code', label: 'Mã sản phẩm', alignRight: true },
   { id: 'quantity', label: 'Số lượng', alignRight: true },
   { id: 'nameGuarantee', label: 'Nhận từ', alignRight: true },
-  { id: 'status', label: 'Trạng thái', alignRight: true },
+  { id: 'status', label: 'Trạng thái', alignRight: false },
   { id: 'date', label: 'Ngày nhận', alignRight: true },
   { id: '' },
 ];
@@ -177,7 +177,7 @@ export default function ProductErrorPage() {
                         <TableCell align="left">{code}</TableCell>
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{nameGuarantee}</TableCell>
-                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="center"><Label color= {mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
                         <TableCell align="right"/>
                           
