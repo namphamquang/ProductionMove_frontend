@@ -195,7 +195,7 @@ export default function TransportPage() {
 
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{to}</TableCell>
-                        <TableCell align="left"><Label color= {mapColor(status)}>{status}</Label></TableCell>
+                        <TableCell align="center"><Label color= {mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
 
                         <TableCell align="right"/>
