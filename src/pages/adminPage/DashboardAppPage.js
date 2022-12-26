@@ -46,9 +46,15 @@ const Label = props => (
 export default function DashboardAppPage() {
   const theme = useTheme();
 
+  const [All, setAll] = useState([]);
   const [productFactory, setProductFactory] = useState([]);
   const [productAgency, setProductAgency] = useState([]);
   const [productGuarantee, setProductGuarantee] = useState([]);
+
+  const getAll = async () => {
+    const response = await axios.get("http://localhost:8000/admin/statistic-all");
+    setAll(response.data);
+  };
 
   const getProductFactory = async () => {
     const response = await axios.get("http://localhost:8000/admin/statistic-factory");
@@ -325,6 +331,7 @@ export default function DashboardAppPage() {
 
   };
 
+  useEffect(() => { getAll(); }, []);
   useEffect(() => { getProductFactory(); }, []);
   useEffect(() => { getProductAgency(); }, []);
   useEffect(() => { getProductGuarantee(); }, []);
@@ -336,24 +343,24 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Chào Mừng Trở Lại
+        Dashboard
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Sản phẩm tại Cơ sở sản xuất" total={714000} icon={'tabler:building-factory-2'} />
+            <AppWidgetSummary title="Sản phẩm tại Cơ sở sản xuất" total={All.factory} icon={'tabler:building-factory-2'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Sản phẩm tại Đại lý" total={1352831} color="info" icon={'fluent:building-shop-20-regular'} />
+            <AppWidgetSummary title="Sản phẩm tại Đại lý" total={All.agency} color="info" icon={'fluent:building-shop-20-regular'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Sản phẩm tại Trung tâm bảo hành" total={1723315} color="warning" icon={'fluent:building-retail-shield-24-regular'} />
+            <AppWidgetSummary title="Sản phẩm đang bảo hành" total={All.guarantee} color="warning" icon={'fluent:building-retail-shield-24-regular'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Sản phẩm Lỗi" total={234} color="error" icon={'bxs:error-alt'} />
+            <AppWidgetSummary title="Sản phẩm Lỗi" total={All.error} color="error" icon={'bxs:error-alt'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
