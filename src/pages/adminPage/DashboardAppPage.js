@@ -1,4 +1,4 @@
-import React,  {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
@@ -15,6 +15,7 @@ import {
   Legend,
 } from '@devexpress/dx-react-chart-material-ui';
 import { Stack, Animation } from '@devexpress/dx-react-chart';
+import ReactApexChart from 'react-apexcharts';
 import axios from 'axios';
 // components
 import Iconify from '../../components/iconify';
@@ -30,6 +31,7 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../../sections/@admin/app';
+
 
 
 
@@ -49,6 +51,68 @@ export default function DashboardAppPage() {
   const getProductFactory = async () => {
     const response = await axios.get("http://localhost:8000/admin/statistic-factory");
     setProductFactory(response.data);
+  };
+
+  const getSumFactory = () => {
+    const sum = { inventory: 0, sold: 0, error: 0 }
+    for (let i = 0; i < productFactory.length; i += 1) {
+      sum.inventory += productFactory[i].inventory;
+      sum.sold += productFactory[i].sold;
+      sum.error += productFactory[i].error;
+    }
+    return sum;
+  }
+  const sumFactory = getSumFactory();
+
+  const series = [{
+    name: 'Tồn kho',
+    data: productFactory.map(f => f.inventory)
+  }, {
+    name: 'Đã bán',
+    data: productFactory.map(f => f.sold)
+  }, {
+    name: 'Lỗi',
+    data: productFactory.map(f => f.error)
+  }];
+
+  const options = {
+    chart: {
+      type: 'bar',
+      height: 350
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded'
+      },
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: productFactory.map(f => f.name),
+    },
+    yaxis: {
+      title: {
+        text: 'sản phẩm'
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => {
+          return "".concat(val).concat(" sản phẩm");
+        }
+      }
+    }
   };
 
   useEffect(() => { getProductFactory(); }, [])
@@ -82,50 +146,23 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
-              <Chart
-                data= {productFactory}
-              >
-                <ArgumentAxis />
-                <ValueAxis />
-                <BarSeries
-                  name="Tồn kho"
-                  valueField="inventory"
-                  argumentField="name"
-                  color="#ffd700"
-                />
-                <BarSeries
-                  name="Đã bán"
-                  valueField="sold"
-                  argumentField="name"
-                  color="#c0c0c0"
-                />
-                <BarSeries
-                  name="Lỗi"
-                  valueField="error"
-                  argumentField="name"
-                  color="#cd7f32"
-                />
-                <Animation />
-                <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                <Title text="Thống kê sản phẩm tại cơ sở sản xuất" />
-                <Stack />
-              </Chart>
+              <Paper>
+                <ReactApexChart options={options} series={series} type="bar" height={350} />
+              </Paper>
             </Paper>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Tỉ lệ sản phẩm ở cơ sở sản xuất"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Tồn kho', value: sumFactory.inventory },
+                { label: 'Đã bán', value: sumFactory.sold },
+                { label: 'Lỗi', value: sumFactory.error },
               ]}
               chartColors={[
                 theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
+                theme.palette.success.main,
                 theme.palette.error.main,
               ]}
             />
@@ -133,65 +170,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
-              <Chart
-                data={[{
-                  country: 'USA',
-                  gold: 36,
-                  silver: 38,
-                  bronze: 36,
-                }, {
-                  country: 'China',
-                  gold: 51,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Russia',
-                  gold: 23,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Britain',
-                  gold: 19,
-                  silver: 13,
-                  bronze: 15,
-                }, {
-                  country: 'Australia',
-                  gold: 14,
-                  silver: 15,
-                  bronze: 17,
-                }, {
-                  country: 'Germany',
-                  gold: 16,
-                  silver: 10,
-                  bronze: 15,
-                }]}
-              >
-                <ArgumentAxis />
-                <ValueAxis />
-
-                <BarSeries
-                  name="Gold Medals"
-                  valueField="gold"
-                  argumentField="country"
-                  color="#ffd700"
-                />
-                <BarSeries
-                  name="Silver Medals"
-                  valueField="silver"
-                  argumentField="country"
-                  color="#c0c0c0"
-                />
-                <BarSeries
-                  name="Bronze Medals"
-                  valueField="bronze"
-                  argumentField="country"
-                  color="#cd7f32"
-                />
-                <Animation />
-                <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                <Title text="Olimpic Medals in 2008" />
-                <Stack />
-              </Chart>
+              <ReactApexChart options={options} series={series} type="bar" height={350} />
             </Paper>
           </Grid>
 

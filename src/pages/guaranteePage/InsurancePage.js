@@ -174,7 +174,7 @@ export default function InsurancePage() {
   const handleReturnFactory = () => {
     axios.post(`http://localhost:8000/guarantee/submit-gtf`, rowData1);
     console.log(rowData1);
-    // window.location.reload();
+    window.location.reload();
   }
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
