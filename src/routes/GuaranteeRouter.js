@@ -10,21 +10,22 @@ import SimpleLayout from '../layouts/simple';
 import DashboardAppPage from '../pages/guaranteePage/DashboardAppPage';
 import InsurancePage from '../pages/guaranteePage/InsurancePage';
 import ReceivePage from '../pages/guaranteePage/ReceivePage';
-import ProductCustomerPage from '../pages/agencyPage/ProductCustomerPage';
-import Page404 from '../pages/adminPage/Page404';
+
+import Page404 from '../pages/Page404';
 
 export default function GuaranteeRouter() {
   const routes = useRoutes([
     {
       path: '/guarantee',
-      element: <GuaranteeLayout />,
+      element: localStorage.getItem('login') === true ? <GuaranteeLayout /> : <Navigate to="/404" />,
       children: [
-        { element: <Navigate to="/guarantee/dashboard" />, index: true },
+        { element: localStorage.getItem('login') === true ? <Navigate to="/guarantee/dashboard" /> : <Navigate to="/404" />, index: true },
         { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'receive', element: <ReceivePage /> },
         { path: 'insurancing', element: <InsurancePage /> },
         
       ],
+      
     },
     {
       element: <SimpleLayout />,

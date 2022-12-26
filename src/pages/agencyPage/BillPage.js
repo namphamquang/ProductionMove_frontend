@@ -143,7 +143,7 @@ export default function BillPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Bill | ProductionMove </title>
       </Helmet>
 
       <Container>

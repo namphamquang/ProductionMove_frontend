@@ -185,7 +185,7 @@ export default function InsurancePage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Insurance | ProductionMove </title>
       </Helmet>
 
       <Container>

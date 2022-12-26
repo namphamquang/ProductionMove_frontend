@@ -187,13 +187,13 @@ export default function ProductCustomerPage() {
     return (
         <>
             <Helmet>
-                <title> User | Minimal UI </title>
+                <title> Customer | ProductionMove </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Xử lý lỗi sản phẩm
+                        Sản phẩm của khách
                     </Typography>
                 </Stack>
 

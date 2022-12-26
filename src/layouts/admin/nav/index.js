@@ -10,13 +10,14 @@ import account from '../../../_mock/account';
 import useResponsive from '../../../hooks/useResponsive';
 // components
 import Logo from '../../../components/logo';
+import SvgColor from '../../../components/svg-color';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
 
 // ----------------------------------------------------------------------
-
+const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 const NAV_WIDTH = 280;
 
 const StyledAccount = styled('div')(({ theme }) => ({
@@ -53,7 +54,7 @@ export default function Nav({ openNav, onCloseNav }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
+      <Box sx={{display: 'inline-flex' }}>
         <Logo />
       </Box>
 

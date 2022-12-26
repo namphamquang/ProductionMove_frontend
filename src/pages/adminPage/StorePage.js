@@ -57,7 +57,7 @@ export default function StorePage() {
   return (
     <>
       <Helmet>
-        <title> Store | Minimal UI </title>
+        <title> Store | ProductionMove </title>
       </Helmet>
 
       <Container>

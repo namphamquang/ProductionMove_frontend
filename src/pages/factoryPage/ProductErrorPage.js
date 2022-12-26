@@ -142,13 +142,13 @@ export default function ProductErrorPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> ErrorProduct | ProductionMove </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Tiếp nhận sản phẩm lỗi
+            Sản phẩm lỗi
           </Typography>
         </Stack>
 

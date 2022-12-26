@@ -7,7 +7,7 @@ import SimpleLayout from '../layouts/simple';
 
 import ProductPage from '../pages/agencyPage/ProductPage';
 import LoginPage from '../pages/loginPage/LoginPage';
-import Page404 from '../pages/agencyPage/Page404';
+import Page404 from '../pages/Page404';
 import SellPage from '../pages/agencyPage/SellPage';
 import DashboardAppPage from '../pages/agencyPage/DashboardAppPage';
 import ImportPage from '../pages/agencyPage/ImportPage';

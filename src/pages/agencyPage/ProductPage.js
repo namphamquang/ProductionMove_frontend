@@ -172,7 +172,7 @@ export default function ProductPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Product | ProductionMove </title>
       </Helmet>
 
       <Container>

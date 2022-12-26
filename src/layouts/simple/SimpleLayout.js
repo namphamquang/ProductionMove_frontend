@@ -23,10 +23,6 @@ const StyledHeader = styled('header')(({ theme }) => ({
 export default function SimpleLayout() {
   return (
     <>
-      <StyledHeader>
-        <Logo />
-      </StyledHeader>
-
       <Outlet />
     </>
   );

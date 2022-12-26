@@ -142,13 +142,13 @@ export default function ProductInsurancePage() {
     return (
         <>
             <Helmet>
-                <title> User | Minimal UI </title>
+                <title> Insurance | ProductionMove </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Trả lại sản phẩm
+                        Sản phẩm cần bảo hành
                     </Typography>
                 </Stack>
 

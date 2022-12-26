@@ -149,7 +149,7 @@ export default function SellPage() {
     return (
         <>
             <Helmet>
-                <title> User | Minimal UI </title>
+                <title> Sales | ProductionMove </title>
             </Helmet>
 
             <Container>

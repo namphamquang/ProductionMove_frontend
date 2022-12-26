@@ -140,7 +140,7 @@ export default function ReceivePage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Receive | ProductionMove </title>
       </Helmet>
 
       <Container>
