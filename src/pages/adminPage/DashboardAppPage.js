@@ -1,8 +1,11 @@
+import React,  {useState, useEffect} from 'react';
+
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Paper } from '@mui/material';
+
 import {
   Chart,
   ArgumentAxis,
@@ -12,6 +15,7 @@ import {
   Legend,
 } from '@devexpress/dx-react-chart-material-ui';
 import { Stack, Animation } from '@devexpress/dx-react-chart';
+import axios from 'axios';
 // components
 import Iconify from '../../components/iconify';
 // sections
@@ -40,6 +44,14 @@ const Label = props => (
 export default function DashboardAppPage() {
   const theme = useTheme();
 
+  const [productFactory, setProductFactory] = useState([]);
+
+  const getProductFactory = async () => {
+    const response = await axios.get("http://localhost:8000/admin/statistic-factory");
+    setProductFactory(response.data);
+  };
+
+  useEffect(() => { getProductFactory(); }, [])
   return (
     <>
       <Helmet>
@@ -71,62 +83,31 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
               <Chart
-                data={[{
-                  country: 'USA',
-                  gold: 36,
-                  silver: 38,
-                  bronze: 36,
-                }, {
-                  country: 'China',
-                  gold: 51,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Russia',
-                  gold: 23,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Britain',
-                  gold: 19,
-                  silver: 13,
-                  bronze: 15,
-                }, {
-                  country: 'Australia',
-                  gold: 14,
-                  silver: 15,
-                  bronze: 17,
-                }, {
-                  country: 'Germany',
-                  gold: 16,
-                  silver: 10,
-                  bronze: 15,
-                }]}
+                data= {productFactory}
               >
                 <ArgumentAxis />
                 <ValueAxis />
-
                 <BarSeries
-                  name="Gold Medals"
-                  valueField="gold"
-                  argumentField="country"
+                  name="Tồn kho"
+                  valueField="inventory"
+                  argumentField="name"
                   color="#ffd700"
                 />
                 <BarSeries
-                  name="Silver Medals"
-                  valueField="silver"
-                  argumentField="country"
+                  name="Đã bán"
+                  valueField="sold"
+                  argumentField="name"
                   color="#c0c0c0"
                 />
                 <BarSeries
-                  name="Bronze Medals"
-                  valueField="bronze"
-                  argumentField="country"
+                  name="Lỗi"
+                  valueField="error"
+                  argumentField="name"
                   color="#cd7f32"
                 />
                 <Animation />
                 <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                <Title text="Olimpic Medals in 2008" />
+                <Title text="Thống kê sản phẩm tại cơ sở sản xuất" />
                 <Stack />
               </Chart>
             </Paper>

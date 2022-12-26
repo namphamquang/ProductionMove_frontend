@@ -17,9 +17,9 @@ export default function GuaranteeRouter() {
   const routes = useRoutes([
     {
       path: '/guarantee',
-      element: localStorage.getItem('login') === true ? <GuaranteeLayout /> : <Navigate to="/404" />,
+      element: <GuaranteeLayout /> ,
       children: [
-        { element: localStorage.getItem('login') === true ? <Navigate to="/guarantee/dashboard" /> : <Navigate to="/404" />, index: true },
+        { element: <Navigate to="/guarantee/dashboard" />, index: true },
         { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'receive', element: <ReceivePage /> },
         { path: 'insurancing', element: <InsurancePage /> },
