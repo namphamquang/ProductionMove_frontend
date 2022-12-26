@@ -47,10 +47,22 @@ export default function DashboardAppPage() {
   const theme = useTheme();
 
   const [productFactory, setProductFactory] = useState([]);
+  const [productAgency, setProductAgency] = useState([]);
+  const [productGuarantee, setProductGuarantee] = useState([]);
 
   const getProductFactory = async () => {
     const response = await axios.get("http://localhost:8000/admin/statistic-factory");
     setProductFactory(response.data);
+  };
+  
+  const getProductAgency = async () => {
+    const response = await axios.get("http://localhost:8000/admin/statistic-agency");
+    setProductAgency(response.data);
+  };
+  
+  const getProductGuarantee = async () => {
+    const response = await axios.get("http://localhost:8000/admin/statistic-guarantee");
+    setProductGuarantee(response.data);
   };
 
   const getSumFactory = () => {
@@ -64,9 +76,31 @@ export default function DashboardAppPage() {
   }
   const sumFactory = getSumFactory();
 
-  const series = [{
+  const getSumAgency = () => {
+    const sum = { inventory: 0, sold: 0, error: 0 }
+    for (let i = 0; i < productAgency.length; i += 1) {
+      sum.inventory += productAgency[i].inventory;
+      sum.sold += productAgency[i].sold;
+      sum.error += productAgency[i].error;
+    }
+    return sum;
+  }
+  const sumAgency = getSumAgency();
+
+  const getSumGuarantee = () => {
+    const sum = { done: 0, insurancing: 0, error: 0 }
+    for (let i = 0; i < productGuarantee.length; i += 1) {
+      sum.done += productGuarantee[i].done;
+      sum.insurancing += productGuarantee[i].insurancing;
+      sum.error += productGuarantee[i].error;
+    }
+    return sum;
+  }
+  const sumGuarantee = getSumGuarantee();
+
+  const seriesF = [{
     name: 'Tồn kho',
-    data: productFactory.map(f => f.inventory)
+    data: productFactory.map(f => f.inventory),
   }, {
     name: 'Đã bán',
     data: productFactory.map(f => f.sold)
@@ -75,10 +109,21 @@ export default function DashboardAppPage() {
     data: productFactory.map(f => f.error)
   }];
 
-  const options = {
+  const optionsF = {
     chart: {
       type: 'bar',
-      height: 350
+      height: 500
+    },
+    title: {
+      text: 'Thống kê sản phẩm tại cơ sở sản xuất',
+      floating: true,
+      offsetY: 0,
+      align: 'center',
+      style: {
+        color: '#444',
+        fontFamily: 'Public Sans,sans-serif',
+        fontSize: '20'
+      }
     },
     plotOptions: {
       bar: {
@@ -100,7 +145,12 @@ export default function DashboardAppPage() {
     },
     yaxis: {
       title: {
-        text: 'sản phẩm'
+        text: 'sản phẩm',
+        style: {
+          color: '#444',
+          fontFamily: 'Public Sans,sans-serif',
+          fontSize: '15'
+        }
       }
     },
     fill: {
@@ -112,10 +162,172 @@ export default function DashboardAppPage() {
           return "".concat(val).concat(" sản phẩm");
         }
       }
+    },
+    legend: {
+      show: true,
+      showForSingleSeries: true,
+      customLegendItems: ['Tồn kho', 'Đã bán', 'Lỗi'],
+      markers: {
+        fillColors: ['rgba(0, 143, 251, 0.85)', 'rgba(0, 227, 150, 0.85)', 'rgba(254, 176, 25, 0.85)']
+      }
     }
+
+  };
+  const seriesA = [{
+    name: 'Tồn kho',
+    data: productAgency.map(a => a.inventory),
+  }, {
+    name: 'Đã bán',
+    data: productAgency.map(a => a.sold)
+  }, {
+    name: 'Ế quá lâu',
+    data: productAgency.map(a => a.error)
+  }];
+
+  const optionsA = {
+    chart: {
+      type: 'bar',
+      height: 500
+    },
+    title: {
+      text: 'Thống kê sản phẩm tại đại lý',
+      floating: true,
+      offsetY: 0,
+      align: 'center',
+      style: {
+        color: '#444',
+        fontFamily: 'Public Sans,sans-serif',
+        fontSize: '20'
+      }
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded'
+      },
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: productAgency.map(a => a.name),
+    },
+    yaxis: {
+      title: {
+        text: 'sản phẩm',
+        style: {
+          color: '#444',
+          fontFamily: 'Public Sans,sans-serif',
+          fontSize: '15'
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => {
+          return "".concat(val).concat(" sản phẩm");
+        }
+      }
+    },
+    legend: {
+      show: true,
+      showForSingleSeries: true,
+      customLegendItems: ['Tồn kho', 'Đã bán', 'Ế quá lâu'],
+      markers: {
+        fillColors: ['rgba(0, 143, 251, 0.85)', 'rgba(0, 227, 150, 0.85)', 'rgba(254, 176, 25, 0.85)']
+      }
+    }
+
   };
 
-  useEffect(() => { getProductFactory(); }, [])
+  const seriesG = [{
+    name: 'Bảo hành xong',
+    data: productGuarantee.map(g => g.done),
+  }, {
+    name: 'Đang bảo hành',
+    data: productGuarantee.map(g => g.insurancing)
+  }, {
+    name: 'Lỗi',
+    data: productGuarantee.map(g => g.error)
+  }];
+
+  const optionsG = {
+    chart: {
+      type: 'bar',
+      height: 500
+    },
+    title: {
+      text: 'Thống kê sản phẩm tại trung tâm bảo hành',
+      floating: true,
+      offsetY: 0,
+      align: 'center',
+      style: {
+        color: '#444',
+        fontFamily: 'Public Sans,sans-serif',
+        fontSize: '20'
+      }
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded'
+      },
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: productGuarantee.map(g => g.name),
+    },
+    yaxis: {
+      title: {
+        text: 'sản phẩm',
+        style: {
+          color: '#444',
+          fontFamily: 'Public Sans,sans-serif',
+          fontSize: '15'
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => {
+          return "".concat(val).concat(" sản phẩm");
+        }
+      }
+    },
+    legend: {
+      show: true,
+      showForSingleSeries: true,
+      customLegendItems: ['Bảo hành xong', 'Đang bảo hành', 'Lỗi'],
+      markers: {
+        fillColors: ['rgba(0, 143, 251, 0.85)', 'rgba(0, 227, 150, 0.85)', 'rgba(254, 176, 25, 0.85)']
+      }
+    }
+
+  };
+
+  useEffect(() => { getProductFactory(); }, []);
+  useEffect(() => { getProductAgency(); }, []);
+  useEffect(() => { getProductGuarantee(); }, []);
   return (
     <>
       <Helmet>
@@ -147,7 +359,7 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
               <Paper>
-                <ReactApexChart options={options} series={series} type="bar" height={350} />
+                <ReactApexChart options={optionsF} series={seriesF} type="bar" height={500} />
               </Paper>
             </Paper>
           </Grid>
@@ -170,23 +382,21 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
-              <ReactApexChart options={options} series={series} type="bar" height={350} />
+              <ReactApexChart options={optionsA} series={seriesA} type="bar" height={500} />
             </Paper>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Current Visits"
+          <AppCurrentVisits
+              title="Tỉ lệ sản phẩm ở đại lý"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Tồn kho', value: sumAgency.inventory },
+                { label: 'Đã bán', value: sumAgency.sold },
+                { label: 'Lỗi', value: sumAgency.error },
               ]}
               chartColors={[
                 theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
+                theme.palette.success.main,
                 theme.palette.error.main,
               ]}
             />
@@ -194,81 +404,21 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <Paper>
-              <Chart
-                data={[{
-                  country: 'USA',
-                  gold: 36,
-                  silver: 38,
-                  bronze: 36,
-                }, {
-                  country: 'China',
-                  gold: 51,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Russia',
-                  gold: 23,
-                  silver: 21,
-                  bronze: 28,
-                }, {
-                  country: 'Britain',
-                  gold: 19,
-                  silver: 13,
-                  bronze: 15,
-                }, {
-                  country: 'Australia',
-                  gold: 14,
-                  silver: 15,
-                  bronze: 17,
-                }, {
-                  country: 'Germany',
-                  gold: 16,
-                  silver: 10,
-                  bronze: 15,
-                }]}
-              >
-                <ArgumentAxis />
-                <ValueAxis />
-
-                <BarSeries
-                  name="Gold Medals"
-                  valueField="gold"
-                  argumentField="country"
-                  color="#ffd700"
-                />
-                <BarSeries
-                  name="Silver Medals"
-                  valueField="silver"
-                  argumentField="country"
-                  color="#c0c0c0"
-                />
-                <BarSeries
-                  name="Bronze Medals"
-                  valueField="bronze"
-                  argumentField="country"
-                  color="#cd7f32"
-                />
-                <Animation />
-                <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                <Title text="Olimpic Medals in 2008" />
-                <Stack />
-              </Chart>
+              <ReactApexChart options={optionsG} series={seriesG} type="bar" height={500} />
             </Paper>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Current Visits"
+          <AppCurrentVisits
+              title="Tỉ lệ sản phẩm ở trung tâm bảo hành"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Bảo hành xong', value: sumGuarantee.done },
+                { label: 'Đang bảo hành', value: sumGuarantee.insurancing },
+                { label: 'Lỗi', value: sumGuarantee.error },
               ]}
               chartColors={[
+                theme.palette.success.main,
                 theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
                 theme.palette.error.main,
               ]}
             />
