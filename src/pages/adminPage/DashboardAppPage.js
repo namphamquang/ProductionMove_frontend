@@ -54,12 +54,12 @@ export default function DashboardAppPage() {
     const response = await axios.get("http://localhost:8000/admin/statistic-factory");
     setProductFactory(response.data);
   };
-  
+
   const getProductAgency = async () => {
     const response = await axios.get("http://localhost:8000/admin/statistic-agency");
     setProductAgency(response.data);
   };
-  
+
   const getProductGuarantee = async () => {
     const response = await axios.get("http://localhost:8000/admin/statistic-guarantee");
     setProductGuarantee(response.data);
@@ -336,24 +336,24 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Chào Mừng Trở Lại
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Sản phẩm tại Cơ sở sản xuất" total={714000} icon={'tabler:building-factory-2'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'icon-park:factory-building'} />
+            <AppWidgetSummary title="Sản phẩm tại Đại lý" total={1352831} color="info" icon={'fluent:building-shop-20-regular'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'map:insurance-agency'} />
+            <AppWidgetSummary title="Sản phẩm tại Trung tâm bảo hành" total={1723315} color="warning" icon={'fluent:building-retail-shield-24-regular'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'mdi:car-insurance'} />
+            <AppWidgetSummary title="Sản phẩm Lỗi" total={234} color="error" icon={'bxs:error-alt'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -387,7 +387,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-          <AppCurrentVisits
+            <AppCurrentVisits
               title="Tỉ lệ sản phẩm ở đại lý"
               chartData={[
                 { label: 'Tồn kho', value: sumAgency.inventory },
@@ -409,7 +409,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-          <AppCurrentVisits
+            <AppCurrentVisits
               title="Tỉ lệ sản phẩm ở trung tâm bảo hành"
               chartData={[
                 { label: 'Bảo hành xong', value: sumGuarantee.done },
