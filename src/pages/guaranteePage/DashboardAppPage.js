@@ -53,8 +53,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
-              subheader="(+43%) than last year"
+              title="Thống kê sản phẩm năm 2022"
               chartLabels={[
                 '01/01/2003',
                 '02/01/2003',
@@ -125,6 +124,7 @@ export default function DashboardAppPage() {
                 { label: 'United States', value: 1200 },
                 { label: 'United Kingdom', value: 1380 },
               ]}
+              
             />
           </Grid>
 

@@ -10,8 +10,11 @@ import {
   Stack,
   Paper,
   Button,
+  Select,
+  InputLabel,
   Popover,
   TableRow,
+  FormControl,
   MenuItem,
   TableBody,
   TableCell,
@@ -104,37 +107,9 @@ export default function UserPage() {
   const [createOpenEdit, setOpenEdit] = useState(false);
   const [USERLIST, setUserlist] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
+  const [user, setUser] = useState({ _id: '', name: '', username: '', password: '', role: '', address: '', sdt: '' });
   const [id, setId] = useState('');
-  const columnsPanel = useMemo(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Tên',
-      },
-      {
-        accessorKey: 'username',
-        header: 'Username',
-      },
-      {
-        accessorKey: 'password',
-        header: 'Mật khẩu'
-      },
-      {
-        accessorKey: 'role',
-        header: 'Vai trò',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Địa chỉ',
-      },
-      {
-        accessorKey: 'sdt',
-        header: 'Số điện thoại',
-      },
 
-    ],
-    [],
-  );
 
   useEffect(() => {
     const getData = async () => {
@@ -175,6 +150,11 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const handleCreate = () => {
+    axios.post("http://localhost:8000/user/create", user);
+    window.location.reload();
+  };
+
   const handleUpdate = async () => {
     try {
       const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
@@ -212,11 +192,7 @@ export default function UserPage() {
           <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
             Cấp tài khoản
           </Button>
-          <CreateUser
-            columns={columnsPanel}
-            open={createPanelOpen}
-            onClose={() => setCreatePanelOpen(false)}
-          />
+
         </Stack>
 
         <Card>
@@ -411,6 +387,121 @@ export default function UserPage() {
           </Fade>
         </Modal>
       </Popover>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createPanelOpen}
+        onClose={() => setCreatePanelOpen(false)}
+        closeAfterTransition
+      >
+        <Fade in={createPanelOpen}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Thêm tài khoản
+            </Typography>
+            <ValidatorForm onSubmit={handleCreate}>
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Tên"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setUser(user => ({
+                    ...user,
+                    name: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Username"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setUser(user => ({
+                    ...user,
+                    username: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Mật khẩu"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setUser(user => ({
+                    ...user,
+                    password: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="role"
+                  onChange={(e) => {
+                    setUser(user => ({
+                      ...user,
+                      role: e.target.value,
+                    }))
+                  }}
+                  required
+                >
+                  <MenuItem key='1' value={'admin'}>Quản trị viên</MenuItem>
+                  <MenuItem key='2' value={'factory'}>Cơ sở sản xuất</MenuItem>
+                  
+                </Select>
+              </FormControl>
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Địa chỉ"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setUser(user => ({
+                    ...user,
+                    address: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Số điện thoại"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setUser(user => ({
+                    ...user,
+                    sdt: e.target.value,
+                  }))
+                }}
+                required
+              />
+
+              <Button
+                sx={{ marginTop: '10px' }}
+                variant="contained"
+                fullWidth
+                type="submit"
+              >
+                Thêm
+              </Button>
+            </ValidatorForm>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 }
