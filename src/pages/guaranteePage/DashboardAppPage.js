@@ -63,8 +63,9 @@ export default function DashboardAppPage() {
               chartData={[
                 {
                   name: 'Bảo hành xong',
-                  type: 'line',
-                  fill: 'solid',
+                  type: 'area',
+                  fill: 'gradient',
+                  color: 'green',
                   data: doneMonth,
                 },
                 {
@@ -75,8 +76,9 @@ export default function DashboardAppPage() {
                 },
                 {
                   name: 'Lỗi',
-                  type: 'column',
+                  type: 'area',
                   fill: 'gradient',
+                  color: 'red',
                   data: errorMonth,
                 },
               ]}
