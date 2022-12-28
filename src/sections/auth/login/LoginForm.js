@@ -15,7 +15,6 @@ export default function LoginForm() {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
-  
 
   const handleClick = async () => {
     try {
@@ -38,7 +37,7 @@ export default function LoginForm() {
 
         window.location.reload();
       } else {
-        // setError(res.data.msg);
+         alert(res.data.msg);
         setPassword('');
       }
     } catch (err) {
@@ -48,15 +47,14 @@ export default function LoginForm() {
 
   return (
     <>
-   
         <Stack spacing={3}>
           <TextField
             name="email"
             autoComplete='true'
             label="Email address"
             onChange={e => setUsername(e.target.value)}
-          
           />
+
           <TextField
             name="password"
             label="Password"
@@ -84,7 +82,7 @@ export default function LoginForm() {
         <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
           Login
         </LoadingButton>
-
+      
     </>
   );
 }

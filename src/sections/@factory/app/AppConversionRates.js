@@ -24,7 +24,7 @@ export default function AppConversionRates({ title, subheader, chartData, ...oth
     tooltip: {
       marker: { show: false },
       y: {
-        formatter: (seriesName) => fNumber(seriesName),
+        formatter: (seriesName) => fNumber(seriesName).concat("%"),
         title: {
           formatter: () => '',
         },

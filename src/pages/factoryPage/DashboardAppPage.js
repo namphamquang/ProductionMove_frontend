@@ -29,12 +29,20 @@ import {
 export default function DashboardAppPage() {
   const theme = useTheme();
   const [productMonth, setProductMonth] = useState([]);
+  const [productError, setProductError] = useState([]);
   const getProductMonth = async () => {
-    const response = await axios.post(`http://localhost:8000/factory/statistic/${localStorage.getItem('id')}`, { year: 'thisyear' });
+    const response = await axios.get(`http://localhost:8000/factory/statistic-year/${localStorage.getItem('id')}`);
     setProductMonth(response.data);
   };
   useEffect(() => {
     getProductMonth();
+  }, []);
+  const getProductError = async () => {
+    const response = await axios.get(`http://localhost:8000/factory/statistic-error/${localStorage.getItem('id')}`);
+    setProductError(response.data);
+  };
+  useEffect(() => {
+    getProductError();
   }, []);
 
   const label = productMonth.map(p => p.month);
@@ -69,7 +77,7 @@ export default function DashboardAppPage() {
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={100}>
 
            <AppWebsiteVisits
               title="Phân tích sản phẩm năm 2022"
@@ -110,22 +118,10 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={100}>
             <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
-              chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ]}
+              title="Tỉ lệ sản phẩm lỗi của các dòng sản phẩm"
+              chartData={productError}
             />
           </Grid>
 
