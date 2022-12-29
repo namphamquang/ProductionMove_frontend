@@ -56,7 +56,7 @@ const styleModal = {
 const TABLE_HEAD = [
   { id: '_id', label: 'id', alignRight: false },
   { id: 'productLine', label: 'Tên dòng sản phẩm', alignRight: false },
-  { id: 'createdAt', label: 'Ngày nhập dòng sản phẩm', alignRight: false },
+  { id: 'madeIn', label: 'Xuất xứ', alignRight: false },
   { id: '' },
 ];
 
@@ -112,7 +112,7 @@ export default function ProductLinePage() {
   const [user, setUser] = useState({ _id: '', name: '', username: '', password: '', role: '', address: '', sdt: '' });
   const [id, setId] = useState('');
   const [productLines, setProductLine] = useState({ _id: '', productLine: '', description: '', image: '' })
-
+  const [add, setAdd] = useState({productLine:'', madeIn:'', description:'', image:''})
   useEffect(() => {
     const getData = async () => {
       try {
@@ -152,8 +152,8 @@ export default function ProductLinePage() {
     setFilterName(event.target.value);
   };
 
-  const handleCreate = () => {
-    axios.post("http://localhost:8000/user/create", user);
+  const handleAdd = () => {
+    axios.post("http://localhost:8000/product/productline-create", add);
     window.location.reload();
   };
 
@@ -189,10 +189,10 @@ export default function ProductLinePage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Tài khoản
+            Dòng sản phẩm
           </Typography>
           <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
-            Cấp tài khoản
+            Thêm
           </Button>
 
         </Stack>
@@ -211,7 +211,7 @@ export default function ProductLinePage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, productLine, description, image, createdAt } = row;
+                    const { _id, productLine, description, image, madeIn } = row;
                     return (
                       <TableRow hover key={_id} >
                         <TableCell />
@@ -220,7 +220,7 @@ export default function ProductLinePage() {
 
                         <TableCell align="left">{productLine}</TableCell>
 
-                        <TableCell align="left" >{createdAt}</TableCell>
+                        <TableCell align="left" >{madeIn}</TableCell>
 
                         <TableCell align="right">
                           <Button onClick={(e) => {
@@ -324,9 +324,88 @@ export default function ProductLinePage() {
             X
         </Button>
         </Paper> 
-        
       </Modal>
-
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createPanelOpen}
+        onClose={() => setCreatePanelOpen(false)}
+        closeAfterTransition
+      >
+        <Fade in={createPanelOpen}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Thêm dòng sản phẩm
+            </Typography>
+            <ValidatorForm onSubmit={handleAdd}>
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Tên"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setAdd(add => ({
+                    ...add,
+                    productLine: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Xuất xứ"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setAdd(add => ({
+                    ...add,
+                    madeIn: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Mô tả"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setAdd(add => ({
+                    ...add,
+                    description: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Link ảnh"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setAdd(add => ({
+                    ...add,
+                    image: e.target.value,
+                  }))
+                }}
+                required
+              />
+              <Button
+                sx={{ marginTop: '10px' }}
+                variant="contained"
+                fullWidth
+                type="submit"
+              >
+                Thêm
+              </Button>
+            </ValidatorForm>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 }

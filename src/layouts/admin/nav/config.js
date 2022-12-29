@@ -24,7 +24,7 @@ const navConfig = [
   {
     title: 'Dòng sản phẩm',
     path: '/admin/productline',
-    icon: icon('ic_user'),
+    icon: icon('ic_product'),
   },
   
 ];

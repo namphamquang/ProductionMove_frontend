@@ -69,8 +69,8 @@ export default function DashboardAppPage() {
               chartData={[
                 {
                   name: 'Đã bán',
-                  type: 'line',
-                  fill: 'solid',
+                  type: 'area',
+                  fill: 'gradient',
                   data: soldMonth,
                 },
                 {
