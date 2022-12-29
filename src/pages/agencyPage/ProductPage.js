@@ -109,12 +109,12 @@ export default function ProductPage() {
   const [factory, setFactory] = useState([]);
 
   const [createOpenEdit, setOpenEdit] = useState();
-  const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), code: '', quantity: '', idFactory: '' });
+  const [rowData, setRowData] = useState({ idAgency: sessionStorage.getItem('id'), code: '', quantity: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/agency/storage/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/agency/storage/${sessionStorage.getItem('id')}`);
 
         setProductList(res.data);
 

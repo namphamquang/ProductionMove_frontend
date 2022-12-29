@@ -103,7 +103,7 @@ export default function SellPage() {
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/agency/storage/${localStorage.getItem('id')}`);
+                const res = await axios.get(`http://localhost:8000/agency/storage/${sessionStorage.getItem('id')}`);
                 setProductList(res.data);
             } catch (err) {
                 // console.log('fe : ' + err.message);
@@ -195,7 +195,7 @@ export default function SellPage() {
                                                         setRowData(rowData => ({
                                                             ...rowData,
                                                             _id: row._id,
-                                                            idAgency: localStorage.getItem('id'),
+                                                            idAgency: sessionStorage.getItem('id'),
                                                             code: row.code,
                                                             quantity: row.quantity,
                                                         }));

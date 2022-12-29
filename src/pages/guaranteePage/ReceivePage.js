@@ -85,7 +85,7 @@ export default function ReceivePage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/delivery/atg-delivering/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/delivery/atg-delivering/${sessionStorage.getItem('id')}`);
 
         setProductList(res.data);
 

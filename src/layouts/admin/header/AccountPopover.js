@@ -35,7 +35,7 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
-    localStorage.clear('role');
+    sessionStorage.clear('role');
     navigate('/');
     window.location.reload();
   };
@@ -62,7 +62,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src='/assets/images/avatars/logoadmin.jpg' alt="photoURL" />
       </IconButton>
 
       <Popover

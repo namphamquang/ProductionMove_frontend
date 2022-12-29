@@ -111,7 +111,7 @@ export default function ProductPage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/factory/storage/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/factory/storage/${sessionStorage.getItem('id')}`);
         setProductList(res.data);
       } catch (err) {
         console.log(err.message);
@@ -214,7 +214,7 @@ export default function ProductPage() {
                               ...rowData,
                               _id: row._id,
                               code: row.code,
-                              idFactory: localStorage.getItem('id'),
+                              idFactory: sessionStorage.getItem('id'),
                             }));
                           }}>
                             Nhập thêm
@@ -285,7 +285,7 @@ export default function ProductPage() {
               <TextValidator
                 sx={{ marginTop: '10px' }}
                 fullWidth
-                value={localStorage.getItem('id')}
+                value={sessionStorage.getItem('id')}
                 label="Mã kho"
                 variant="standard"
                 color="secondary"

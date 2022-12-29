@@ -38,7 +38,7 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
-    localStorage.clear('role');
+    sessionStorage.clear('role');
     navigate('/');
     window.location.reload();
   };
@@ -62,7 +62,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src='/assets/images/avatars/logoguarantee.jpg' alt="photoURL" />
       </IconButton>
 
       <Popover
@@ -86,10 +86,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {localStorage.getItem('id')}
+            {sessionStorage.getItem('id')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {localStorage.getItem('username')}
+            {sessionStorage.getItem('username')}
           </Typography>
         </Box>
 

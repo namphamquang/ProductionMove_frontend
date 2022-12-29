@@ -31,7 +31,7 @@ export default function DashboardAppPage() {
   const [productMonth, setProductMonth] = useState([]);
   const [productQ, setProductQ] = useState([]);
   const getProductMonth = async () => {
-    const response = await axios.get(`http://localhost:8000/guarantee/statistic-year/${localStorage.getItem('id')}`);
+    const response = await axios.get(`http://localhost:8000/guarantee/statistic-year/${sessionStorage.getItem('id')}`);
     setProductMonth(response.data);
   };
   useEffect(() => {

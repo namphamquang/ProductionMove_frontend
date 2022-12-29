@@ -106,7 +106,7 @@ export default function ImportPage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/delivery/fta-delivering/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/delivery/fta-delivering/${sessionStorage.getItem('id')}`);
 
         setProductList(res.data);
 

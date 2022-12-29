@@ -23,11 +23,12 @@ export default function LoginForm() {
         setUsername('');
         setPassword('');
         console.log(res.data);
-        localStorage.setItem('role', res.data.role);
-        localStorage.setItem('login', true);
-        localStorage.setItem('username', res.data.username);
-        localStorage.setItem('id', res.data.id);
-        localStorage.setItem('accessToken', res.data.accessToken);
+        
+        sessionStorage.setItem('role', res.data.role);
+        sessionStorage.setItem('login', true);
+        sessionStorage.setItem('username', res.data.username);
+        sessionStorage.setItem('id', res.data.id);
+        sessionStorage.setItem('accessToken', res.data.accessToken);
         //  
         if (res.data.role === "admin") {
           navigate("/admin");

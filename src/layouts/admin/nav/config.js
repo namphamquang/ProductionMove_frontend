@@ -23,13 +23,8 @@ const navConfig = [
   },
   {
     title: 'Dòng sản phẩm',
-    path: '/admin/line',
+    path: '/admin/productline',
     icon: icon('ic_user'),
-  },
-  {
-    title: 'product',
-    path: '/admin/products',
-    icon: icon('ic_cart'),
   },
   
 ];

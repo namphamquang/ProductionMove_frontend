@@ -110,12 +110,12 @@ export default function InsurancePage() {
   const [BILLLIST, setBillList] = useState([]);
   const [factory, setFactory] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', idOrderGuarantee: '' });
-  const [rowData1, setRowData1] = useState({ idGuarantee: localStorage.getItem('id'),  code: '', quantity: '', idFactory: '' });
+  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'),  code: '', quantity: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/guarantee/insurancing/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/guarantee/insurancing/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
         // console.log('fe : ' + err.message);

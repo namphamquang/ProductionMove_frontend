@@ -8,7 +8,7 @@ import SimpleLayout from '../layouts/simple';
 import UserPage from '../pages/adminPage/UserPage';
 import LoginPage from '../pages/loginPage/LoginPage';
 import Page404 from '../pages/Page404';
-import ProductsPage from '../pages/adminPage/ProductsPage';
+import ProductLinePage from '../pages/adminPage/ProductLinePage';
 import DashboardAppPage from '../pages/adminPage/DashboardAppPage';
 import StorePage from'../pages/adminPage/StorePage';
 
@@ -21,8 +21,8 @@ export default function AdminRouter() {
         { element: <Navigate to="/admin/dashboard" />, index: true },
         { path: 'dashboard', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
         {path: 'store', element: <StorePage /> },
+        { path: 'productline', element: <ProductLinePage /> },
       ],
     },
     {

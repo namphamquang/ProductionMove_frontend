@@ -31,14 +31,14 @@ export default function DashboardAppPage() {
   const [productMonth, setProductMonth] = useState([]);
   const [productQ, setProductQ] = useState([]);
   const getProductMonth = async () => {
-    const response = await axios.get(`http://localhost:8000/agency/statistic-year/${localStorage.getItem('id')}`);
+    const response = await axios.get(`http://localhost:8000/agency/statistic-year/${sessionStorage.getItem('id')}`);
     setProductMonth(response.data);
   };
   useEffect(() => {
     getProductMonth();
   }, []);
   const getProductQ = async () => {
-    const response = await axios.get(`http://localhost:8000/agency/statistic-quarter/${localStorage.getItem('id')}`);
+    const response = await axios.get(`http://localhost:8000/agency/statistic-quarter/${sessionStorage.getItem('id')}`);
     setProductQ(response.data);
   };
   useEffect(() => {

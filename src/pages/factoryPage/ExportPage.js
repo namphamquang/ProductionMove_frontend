@@ -100,14 +100,14 @@ export default function ExportPage() {
 
     const [PRODUCTLIST, setProductList] = useState([]);
 
-    const [rowData, setRowData] = useState({ idFactory: localStorage.getItem('id'), code: '', quantity: '', idAgency: '' });
+    const [rowData, setRowData] = useState({ idFactory: sessionStorage.getItem('id'), code: '', quantity: '', idAgency: '' });
 
     const [agency, setAgency] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/factory/storage/${localStorage.getItem('id')}`);
+                const res = await axios.get(`http://localhost:8000/factory/storage/${sessionStorage.getItem('id')}`);
                 setProductList(res.data);
             } catch (err) {
                 console.log(err.message);
@@ -206,6 +206,7 @@ export default function ExportPage() {
                                                             code: row.code,
                                                             quantity: row.quantity,
                                                         }));
+                                                        console.log(rowData);
                                                     }}>
                                                         Xuất
                                                     </Button>

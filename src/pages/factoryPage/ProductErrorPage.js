@@ -91,7 +91,7 @@ export default function ProductErrorPage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/factory/error-product/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/factory/error-product/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
         // console.log('fe : ' + err.message);

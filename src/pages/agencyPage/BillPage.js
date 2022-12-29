@@ -92,7 +92,7 @@ export default function BillPage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/delivery/atc/${localStorage.getItem('id')}`);
+        const res = await axios.get(`http://localhost:8000/delivery/atc/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
         // console.log('fe : ' + err.message);

@@ -108,13 +108,13 @@ export default function ProductCustomerPage() {
     const [createOpenEdit, setOpenEdit] = useState(false);
     const [createOpenEdit2, setOpenEdit2] = useState(false);
     const [BILLLIST, setBillList] = useState([]);
-    const [rowData, setRowData] = useState({ idAgency: localStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
+    const [rowData, setRowData] = useState({ idAgency: sessionStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
     const [guarantee, setGuarantee] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/agency/product-customers/${localStorage.getItem('id')}`);
+                const res = await axios.get(`http://localhost:8000/agency/product-customers/${sessionStorage.getItem('id')}`);
                 setBillList(res.data);
             } catch (err) {
                 // console.log('fe : ' + err.message);

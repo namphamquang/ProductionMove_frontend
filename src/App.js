@@ -1,5 +1,4 @@
 // routes
-import Router from './routes';
 import AdminRouter from './routes/AdminRouter';
 import LoginRouter from './routes/LoginRouter';
 import FactoryRouter from './routes/FactoryRouter';
@@ -16,7 +15,7 @@ import { StyledChart } from './components/chart';
 
 export default function App() {
   return (
-    localStorage.getItem('role') === 'admin' ? (
+    sessionStorage.getItem('role') === 'admin' ? (
       <>
         <ThemeProvider>
           <ScrollToTop />
@@ -25,7 +24,7 @@ export default function App() {
         </ThemeProvider>
       </>
     ) :
-      localStorage.getItem('role') === 'factory' ? (
+      sessionStorage.getItem('role') === 'factory' ? (
         <>
           <ThemeProvider>
             <ScrollToTop />
@@ -34,7 +33,7 @@ export default function App() {
           </ThemeProvider>
         </>
       ) :
-        localStorage.getItem('role') === 'agency' ? (
+        sessionStorage.getItem('role') === 'agency' ? (
           <>
             <ThemeProvider>
               <ScrollToTop />
@@ -43,7 +42,7 @@ export default function App() {
             </ThemeProvider>
           </>
         ) :
-          localStorage.getItem('role') === 'guarantee' ? (
+          sessionStorage.getItem('role') === 'guarantee' ? (
             <>
               <ThemeProvider>
                 <ScrollToTop />
