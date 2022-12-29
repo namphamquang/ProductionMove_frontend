@@ -176,6 +176,7 @@ export default function InsurancePage() {
     }
     catch (err) {
       alert(err.message);
+      console.log(err.message);
     }
   }
   const handleReturnFactory = async () => {
@@ -184,6 +185,7 @@ export default function InsurancePage() {
       window.location.reload();
     } catch (err) {
       alert(err.message);
+      console.log(err.message);
     }
   }
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
