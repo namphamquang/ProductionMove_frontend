@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Paper } from '@mui/material';
 
-import {
-  Chart,
-  ArgumentAxis,
-  ValueAxis,
-  BarSeries,
-  Title,
-  Legend,
-} from '@devexpress/dx-react-chart-material-ui';
-import { Stack, Animation } from '@devexpress/dx-react-chart';
 import ReactApexChart from 'react-apexcharts';
 import axios from 'axios';
 // components
@@ -22,26 +12,13 @@ import Iconify from '../../components/iconify';
 // sections
 import {
   AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
   AppCurrentVisits,
-  AppWebsiteVisits,
   AppTrafficBySite,
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
+
 } from '../../sections/@admin/app';
 
-
-
-
 // ----------------------------------------------------------------------
-const Root = props => (
-  <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
-);
-const Label = props => (
-  <Legend.Label {...props} sx={{ whiteSpace: 'nowrap' }} />
-);
 
 export default function DashboardAppPage() {
   const theme = useTheme();
@@ -52,23 +29,41 @@ export default function DashboardAppPage() {
   const [productGuarantee, setProductGuarantee] = useState([]);
 
   const getAll = async () => {
-    const response = await axios.get("http://localhost:8000/admin/statistic-all");
-    setAll(response.data);
+    try {
+      const response = await axios.get("http://localhost:8000/admin/statistic-all");
+      setAll(response.data);
+    }
+    catch (err) {
+      alert(err.message);
+    }
   };
 
   const getProductFactory = async () => {
-    const response = await axios.get("http://localhost:8000/admin/statistic-factory");
-    setProductFactory(response.data);
+    try {
+      const response = await axios.get("http://localhost:8000/admin/statistic-factory");
+      setProductFactory(response.data);
+    }
+    catch (err) {
+      alert(err.message);
+    }
   };
 
   const getProductAgency = async () => {
-    const response = await axios.get("http://localhost:8000/admin/statistic-agency");
-    setProductAgency(response.data);
+    try {
+      const response = await axios.get("http://localhost:8000/admin/statistic-agency");
+      setProductAgency(response.data);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const getProductGuarantee = async () => {
-    const response = await axios.get("http://localhost:8000/admin/statistic-guarantee");
-    setProductGuarantee(response.data);
+    try {
+      const response = await axios.get("http://localhost:8000/admin/statistic-guarantee");
+      setProductGuarantee(response.data);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const getSumFactory = () => {
@@ -343,7 +338,7 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-        Dashboard
+          Dashboard
         </Typography>
 
         <Grid container spacing={3}>

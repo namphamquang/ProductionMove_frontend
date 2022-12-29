@@ -1,34 +1,23 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
-  Box,
   Card,
   Table,
-  Modal,
   Stack,
   Paper,
-  Avatar,
-  Button,
-  Popover,
-  Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
+
 import axios from 'axios';
 // components
-
-
-
 
 import Label from '../../components/label';
 import Scrollbar from '../../components/scrollbar';
@@ -81,13 +70,10 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function TransportPage() {
-  const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
 
@@ -95,9 +81,6 @@ export default function TransportPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [BILLLIST, setBillList] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
-  const [id, setId] = useState('');
- 
 
   useEffect(() => {
     const getData = async () => {
@@ -105,7 +88,7 @@ export default function TransportPage() {
         const res = await axios.get(`http://localhost:8000/delivery/fta/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -120,16 +103,6 @@ export default function TransportPage() {
   const mapColor = (status) => {
     return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'error';
   }
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = BILLLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -165,7 +138,7 @@ export default function TransportPage() {
         </Stack>
 
         <Card>
-          <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <TransListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -175,16 +148,13 @@ export default function TransportPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={BILLLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, to, status, date } = row;
-                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox"/>
                           
 

@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useState, useEffect } from 'react';
 // @mui
 import {
@@ -71,26 +70,21 @@ export default function ReceivePage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('code');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ idDelivery: '', code: '', quantity: '', });
 
+  const [PRODUCTLIST, setProductList] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/delivery/atg-delivering/${sessionStorage.getItem('id')}`);
-
         setProductList(res.data);
-
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -102,7 +96,6 @@ export default function ReceivePage() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -120,14 +113,11 @@ export default function ReceivePage() {
 
   const handleImport = async (idD) => {
     try {
-      console.log(rowData);
       const res = await axios.post(`http://localhost:8000/guarantee/submit-atg`, { idOrderGuarantee: idD }
       );
-
       window.location.reload();
-
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
 
@@ -152,7 +142,7 @@ export default function ReceivePage() {
         </Stack>
 
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -162,15 +152,13 @@ export default function ReceivePage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={PRODUCTLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, nameAgency, date } = row;
-                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                         <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>

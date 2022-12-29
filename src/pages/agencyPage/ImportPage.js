@@ -24,9 +24,6 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import axios from 'axios';
 // components
 
-
-
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -34,17 +31,7 @@ import { ProductListHead, ProductListToolbar } from '../../sections/@agency/prod
 // mock
 // 
 // ----------------------------------------------------------------------
-const styleModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: '10px',
-  p: 3,
-};
+
 const TABLE_HEAD = [
   { id: 'id', label: 'Mã đơn', alignRight: false },
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
@@ -91,27 +78,21 @@ export default function ImportPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('code');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [createOpenEdit, setOpenEdit] = useState(false);
-  const [PRODUCTLIST, setProductList] = useState([]);
-  const [rowData, setRowData] = useState({ idDelivery: '', code: '', quantity: '', });
 
+  const [PRODUCTLIST, setProductList] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/delivery/fta-delivering/${sessionStorage.getItem('id')}`);
-
         setProductList(res.data);
-
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -123,10 +104,6 @@ export default function ImportPage() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
-
-
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -141,32 +118,15 @@ export default function ImportPage() {
     setFilterName(event.target.value);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
-      );
-
-      window.location.reload();
-
-
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
   const handleImport = async (idD) => {
     try {
-      console.log(rowData);
-      const res = await axios.post(`http://localhost:8000/agency/submit-fta`, { idDelivery: idD }
+      await axios.post(`http://localhost:8000/agency/submit-fta`, { idDelivery: idD }
       );
-
       window.location.reload();
-
-
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
-
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -185,12 +145,9 @@ export default function ImportPage() {
           <Typography variant="h4" gutterBottom>
             Nhập sản phẩm
           </Typography>
-
-
         </Stack>
-
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -200,7 +157,6 @@ export default function ImportPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={PRODUCTLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
 
                 />
@@ -208,10 +164,8 @@ export default function ImportPage() {
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, from, date } = row;
 
-                    // console.log(test);
-                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                         <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
@@ -279,8 +233,6 @@ export default function ImportPage() {
           />
         </Card>
       </Container>
-
-
     </>
   );
 }

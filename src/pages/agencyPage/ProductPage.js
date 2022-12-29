@@ -96,8 +96,6 @@ export default function ProductPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('code');
 
   const [filterName, setFilterName] = useState('');
@@ -115,11 +113,9 @@ export default function ProductPage() {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/agency/storage/${sessionStorage.getItem('id')}`);
-
         setProductList(res.data);
-
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -127,16 +123,15 @@ export default function ProductPage() {
 
   useEffect(() => {
     const getFactory = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8000/factory`);
-            setFactory(res.data);
-            console.log(res.data);
-        } catch (err) {
-            console.log(err.message);
-        }
+      try {
+        const res = await axios.get(`http://localhost:8000/factory`);
+        setFactory(res.data);
+      } catch (err) {
+        alert(err.message);
+      }
     };
     getFactory();
-}, []);
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -158,9 +153,13 @@ export default function ProductPage() {
     setFilterName(event.target.value);
   };
 
-  const handleClickReturn = () => {
-    axios.post(`http://localhost:8000/agency/submit-atf`, rowData);
-    window.location.reload();
+  const handleClickReturn = async () => {
+    try {
+      await axios.post(`http://localhost:8000/agency/submit-atf`, rowData);
+      window.location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
@@ -184,7 +183,7 @@ export default function ProductPage() {
         </Stack>
 
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -194,16 +193,13 @@ export default function ProductPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={PRODUCTLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, name, price } = row;
-
-                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                         <TableCell />
 
                         <TableCell align='left'>{_id}</TableCell>
@@ -217,12 +213,12 @@ export default function ProductPage() {
                         <TableCell align="left">{quantity}</TableCell>
 
                         <TableCell align='left'><Button onClick={(e) => {
-                                    setRowData(rowData => ({
-                                        ...rowData,
-                                        code: row.code,
-                                    }));
-                                    setOpenEdit(true);
-                                }}>Trả về CSSX</Button></TableCell>
+                          setRowData(rowData => ({
+                            ...rowData,
+                            code: row.code,
+                          }));
+                          setOpenEdit(true);
+                        }}>Trả về CSSX</Button></TableCell>
                       </TableRow>
                     );
                   })}
@@ -272,73 +268,73 @@ export default function ProductPage() {
         </Card>
       </Container>
       <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={createOpenEdit}
-                onClose={() => setOpenEdit(false)}
-                closeAfterTransition
-            >
-                <Fade in={createOpenEdit}>
-                    <Box sx={styleModal}>
-                        <Typography id="transition-modal-title" variant="h6" component="h2">
-                            Nhập thông tin vận chuyển
-                        </Typography>
-                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
-                            <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                label="Factory"
-                                onChange={(e) => {
-                                    setRowData(rowData => ({
-                                        ...rowData,
-                                        idFactory: e.target.value,
-                                    }))
-                                }}
-                            >
-                                {(factory).map((row) => {
-                                    const { _id, name } = row;
-                                    return (
-                                        <MenuItem key={_id} value={_id}>{name}</MenuItem>
-                                    );
-                                })}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Mã sản phẩm"
-                            variant="standard"
-                            fullWidth
-                            type="text"
-                            value={rowData.code}
-                            disabled
-                        />
-                        <TextField
-                            sx={{ margin: '15px 0' }}
-                            label="Số lượng"
-                            variant="standard"
-                            fullWidth
-                            type="number"
-                            onChange={(e) => {
-                                setRowData(rowData => ({
-                                    ...rowData,
-                                    quantity: e.target.value,
-                                }))
-                            }}
-                        />
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createOpenEdit}
+        onClose={() => setOpenEdit(false)}
+        closeAfterTransition
+      >
+        <Fade in={createOpenEdit}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Nhập thông tin vận chuyển
+            </Typography>
+            <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+              <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Factory"
+                onChange={(e) => {
+                  setRowData(rowData => ({
+                    ...rowData,
+                    idFactory: e.target.value,
+                  }))
+                }}
+              >
+                {(factory).map((row) => {
+                  const { _id, name } = row;
+                  return (
+                    <MenuItem key={_id} value={_id}>{name}</MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <TextField
+              sx={{ margin: '15px 0' }}
+              label="Mã sản phẩm"
+              variant="standard"
+              fullWidth
+              type="text"
+              value={rowData.code}
+              disabled
+            />
+            <TextField
+              sx={{ margin: '15px 0' }}
+              label="Số lượng"
+              variant="standard"
+              fullWidth
+              type="number"
+              onChange={(e) => {
+                setRowData(rowData => ({
+                  ...rowData,
+                  quantity: e.target.value,
+                }))
+              }}
+            />
 
-                        <Button
-                            sx={{ marginTop: '10px' }}
-                            variant="contained"
-                            fullWidth
-                            type="submit"
-                            onClick={handleClickReturn}
-                        >
-                            Trả lại
-                        </Button>
-                    </Box>
-                </Fade>
-            </Modal>
+            <Button
+              sx={{ marginTop: '10px' }}
+              variant="contained"
+              fullWidth
+              type="submit"
+              onClick={handleClickReturn}
+            >
+              Trả lại
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 }

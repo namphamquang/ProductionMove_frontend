@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -11,19 +11,12 @@ import {
   Stack,
   Paper,
   Button,
-  Select,
-  InputLabel,
-  TextField,
-  Popover,
   TableRow,
-  FormControl,
-  MenuItem,
   TableBody,
   Divider,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
@@ -33,8 +26,6 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import axios from 'axios';
 // components
-import CreateUser from '../../sections/@admin/user/CreateUser';
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
@@ -98,38 +89,32 @@ export default function ProductLinePage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
-  const [createOpenEdit, setOpenEdit] = useState(false);
+
   const [USERLIST, setUserlist] = useState([]);
-  const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
-  const [user, setUser] = useState({ _id: '', name: '', username: '', password: '', role: '', address: '', sdt: '' });
-  const [id, setId] = useState('');
+
   const [productLines, setProductLine] = useState({ _id: '', productLine: '', description: '', image: '' })
-  const [add, setAdd] = useState({productLine:'', madeIn:'', description:'', image:''})
+
+  const [add, setAdd] = useState({ productLine: '', madeIn: '', description: '', image: '' })
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get('http://localhost:8000/product/productlines');
         setUserlist(res.data);
       } catch (err) {
-        console.log(err.message);
+        alert(err.message);
       }
     };
     getData();
   }, []);
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
   };
 
   const handleRequestSort = (event, property) => {
@@ -152,26 +137,13 @@ export default function ProductLinePage() {
     setFilterName(event.target.value);
   };
 
-  const handleAdd = () => {
-    axios.post("http://localhost:8000/product/productline-create", add);
-    window.location.reload();
-  };
-
-  const handleUpdate = async () => {
+  const handleAdd = async () => {
     try {
-      const res = await axios.put(`http://localhost:8000/user/update/${id}`, rowData
-      );
-      if (res.data.update) {
-        window.location.reload();
-        alert(res.data.msg);
-      }
+      await axios.post("http://localhost:8000/product/productline-create", add);
+      window.location.reload();
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
-  };
-  const handleDelete = () => {
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -211,7 +183,7 @@ export default function ProductLinePage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, productLine, description, image, madeIn } = row;
+                    const { _id, productLine, madeIn } = row;
                     return (
                       <TableRow hover key={_id} >
                         <TableCell />
@@ -233,7 +205,6 @@ export default function ProductLinePage() {
                               image: row.image,
                               createdAt: row.createdAt
                             }));
-                            console.log(productLines);
                           }}>
                             Xem chi tiết
                           </Button>
@@ -299,15 +270,15 @@ export default function ProductLinePage() {
               <img src={`${productLines.image}`}
                 alt='hihi' />
             </Grid>
-            <Divider  orientation="vertical" variant="middle" flexItem />
+            <Divider orientation="vertical" variant="middle" flexItem />
             <Grid item xs={12} md={6} lg={8}>
-            <Typography variant="string" component="h3">
+              <Typography variant="string" component="h3">
                 Tên:
               </Typography>
-            <Typography variant="string" component="p">
+              <Typography variant="string" component="p">
                 {productLines.productLine}
               </Typography>
-            <Typography variant="string" component="h3">
+              <Typography variant="string" component="h3">
                 Mô tả:
               </Typography>
               <Typography variant="string" component="p">
@@ -315,15 +286,15 @@ export default function ProductLinePage() {
               </Typography>
             </Grid>
           </Grid>
-          <Button 
-            style={{position:"absolute", top: "10px", right: "10px"}}
+          <Button
+            style={{ position: "absolute", top: "10px", right: "10px" }}
             variant='contained'
             color='error'
             onClick={() => setOpen(false)}
-        >
+          >
             X
-        </Button>
-        </Paper> 
+          </Button>
+        </Paper>
       </Modal>
       <Modal
         aria-labelledby="transition-modal-title"

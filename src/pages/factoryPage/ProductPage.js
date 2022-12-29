@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -10,27 +9,26 @@ import {
   Modal,
   Stack,
   Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
+  FormControl,
+  InputLabel,
+  Select,
   MenuItem,
+  TableRow,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
 import Fade from '@mui/material/Fade';
 // import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import axios from 'axios';
-import moment from 'moment/moment';
-// components
 
+import axios from 'axios';
+// components
+import Iconify from '../../components/iconify/Iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 
@@ -95,6 +93,8 @@ export default function ProductPage() {
 
   const [order, setOrder] = useState('asc');
 
+  const [createPanelOpen, setCreatePanelOpen] = useState(false);
+
   const [orderBy, setOrderBy] = useState('code');
 
   const [filterName, setFilterName] = useState('');
@@ -102,24 +102,42 @@ export default function ProductPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [createOpenEdit, setOpenEdit] = useState(false);
+
   const [PRODUCTLIST, setProductList] = useState([]);
+  const [products, setProduct] = useState([]);
   const [rowData, setRowData] = useState({ _id: '', idFactory: '', code: '', quantity: '' });
-
-  const [id, setId] = useState('');
-
-
+  const [add, setAdd] = useState({ code: '', quantity:'' });
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/factory/storage/${sessionStorage.getItem('id')}`);
         setProductList(res.data);
       } catch (err) {
-        console.log(err.message);
+        alert(err.message);
       }
     };
     getData();
   }, []);
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/product`);
+        setProduct(res.data);
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+    getProduct();
+  }, []);
 
+  const handleAdd = async () => {
+    try {
+      await axios.post("http://localhost:8000/product/productline-create", add);
+      window.location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -142,18 +160,12 @@ export default function ProductPage() {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.post(`http://localhost:8000/factory/import-product`, rowData
-      );
-
+      await axios.post(`http://localhost:8000/factory/import-product`, rowData);
       window.location.reload();
-
-
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
-
- 
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -172,6 +184,9 @@ export default function ProductPage() {
           <Typography variant="h4" gutterBottom>
             Nhập sản phẩm
           </Typography>
+          <Button variant="contained" onClick={() => setCreatePanelOpen(true)} startIcon={<Iconify icon="eva:plus-fill" />}>
+            Thêm
+          </Button>
         </Stack>
 
         <Card>
@@ -206,10 +221,8 @@ export default function ProductPage() {
                         <TableCell align="left">{quantity}</TableCell>
 
                         <TableCell align="right">
-                          <Button onClick={(e) => {
+                          <Button onClick={() => {
                             setOpenEdit(true)
-                            setId(row._id);
-                            console.log(id);
                             setRowData(rowData => ({
                               ...rowData,
                               _id: row._id,
@@ -313,6 +326,66 @@ export default function ProductPage() {
                   }))
                 }}
               />
+              <Button
+                sx={{ marginTop: '10px' }}
+                variant="contained"
+                fullWidth
+                type="submit"
+              >
+                Thêm
+              </Button>
+            </ValidatorForm>
+          </Box>
+        </Fade>
+      </Modal>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={createPanelOpen}
+        onClose={() => setCreatePanelOpen(false)}
+        closeAfterTransition
+      >
+        <Fade in={createPanelOpen}>
+          <Box sx={styleModal}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Thêm sản phẩm mới vào kho
+            </Typography>
+            <ValidatorForm onSubmit={handleAdd}>
+            <FormControl variant='standard' fullWidth size='small'  sx={{ margin: '15px 0' }}>
+                            <InputLabel id="demo-simple-select-label">Mã sản phẩm</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Age"
+                                onChange={(e) => {
+                                    setAdd(add => ({
+                                        ...add,
+                                        code: e.target.value,
+                                    }))
+                                }}
+                            >
+                                {(products).map((row) => {
+                                    const { code } = row;
+                                    return (
+                                        <MenuItem key={code} value={code}>{code}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+              <TextValidator
+                sx={{ marginTop: '10px' }}
+                fullWidth
+                label="Số lượng"
+                variant="standard"
+                color="secondary"
+                onChange={(e) => {
+                  setAdd(add => ({
+                    ...add,
+                    quantity: e.target.value,
+                  }))
+                }}
+                required />
+               
               <Button
                 sx={{ marginTop: '10px' }}
                 variant="contained"

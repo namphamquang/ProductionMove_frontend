@@ -98,17 +98,20 @@ export default function ProductCustomerPage() {
 
     const [order, setOrder] = useState('asc');
 
-    const [selected, setSelected] = useState([]);
-
     const [orderBy, setOrderBy] = useState('name');
 
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
     const [createOpenEdit, setOpenEdit] = useState(false);
+
     const [createOpenEdit2, setOpenEdit2] = useState(false);
+
     const [BILLLIST, setBillList] = useState([]);
+
     const [rowData, setRowData] = useState({ idAgency: sessionStorage.getItem('id'), idDelivery: '', quantity: '', description: '', idGuarantee: '' });
+    
     const [guarantee, setGuarantee] = useState([]);
 
     useEffect(() => {
@@ -117,7 +120,7 @@ export default function ProductCustomerPage() {
                 const res = await axios.get(`http://localhost:8000/agency/product-customers/${sessionStorage.getItem('id')}`);
                 setBillList(res.data);
             } catch (err) {
-                // console.log('fe : ' + err.message);
+                alert(err.message);
             }
         };
         getData();
@@ -128,9 +131,8 @@ export default function ProductCustomerPage() {
             try {
                 const res = await axios.get(`http://localhost:8000/guarantee`);
                 setGuarantee(res.data);
-                console.log(res.data);
             } catch (err) {
-                console.log(err.message);
+                alert(err.message);
             }
         };
         getGuarantee();
@@ -144,14 +146,6 @@ export default function ProductCustomerPage() {
     const mapColor = (status) => {
         return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
     }
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = BILLLIST.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -174,9 +168,13 @@ export default function ProductCustomerPage() {
         setFilterName(event.target.value);
     };
 
-    const handleInsurance = () => {
-        axios.post(`http://localhost:8000/agency/order-guarantee`, rowData);
-        window.location.reload();
+    const handleInsurance = async () => {
+        try {
+            await axios.post(`http://localhost:8000/agency/order-guarantee`, rowData);
+            window.location.reload();
+        } catch (err) {
+            alert(err.message);
+        }
     }
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
@@ -198,7 +196,7 @@ export default function ProductCustomerPage() {
                 </Stack>
 
                 <Card>
-                    <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <TransListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
@@ -208,16 +206,13 @@ export default function ProductCustomerPage() {
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
                                     rowCount={BILLLIST.length}
-                                    numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         const { _id, code, nameCustomer, quantity, date, isExpired } = row;
-                                        const selectedUser = selected.indexOf(code) !== -1;
                                         return (
-                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox" >
                                                 <TableCell padding="checkbox" />
                                                 <TableCell align='left'>{_id}</TableCell>
                                                 <TableCell align="left">{code}</TableCell>

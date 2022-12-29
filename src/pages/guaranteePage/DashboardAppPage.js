@@ -3,36 +3,30 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Box, Grid, Container, Typography, Select, MenuItem, InputLabel, Paper } from '@mui/material';
-import ReactApexChart from 'react-apexcharts';
+
+import { Grid, Container, Typography } from '@mui/material';
+
 import axios from 'axios';
-import { Label } from '@mui/icons-material';
+
 // components
 import Iconify from '../../components/iconify';
 // sections
 import {
   AppTasks,
   AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
   AppWebsiteVisits,
   AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
 } from '../../sections/@guarantee/app';
-
-
 // ----------------------------------------------------------------------
-
 export default function DashboardAppPage() {
-  const theme = useTheme();
   const [productMonth, setProductMonth] = useState([]);
-  const [productQ, setProductQ] = useState([]);
   const getProductMonth = async () => {
-    const response = await axios.get(`http://localhost:8000/guarantee/statistic-year/${sessionStorage.getItem('id')}`);
-    setProductMonth(response.data);
+    try {
+      const response = await axios.get(`http://localhost:8000/guarantee/statistic-year/${sessionStorage.getItem('id')}`);
+      setProductMonth(response.data);
+    } catch (err) {
+      alert(err.message);
+    }
   };
   useEffect(() => {
     getProductMonth();

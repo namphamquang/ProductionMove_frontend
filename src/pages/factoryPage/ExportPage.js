@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
     Box,
@@ -89,7 +89,6 @@ export default function ExportPage() {
 
     const [order, setOrder] = useState('asc');
 
-
     const [orderBy, setOrderBy] = useState('code');
 
     const [filterName, setFilterName] = useState('');
@@ -110,7 +109,7 @@ export default function ExportPage() {
                 const res = await axios.get(`http://localhost:8000/factory/storage/${sessionStorage.getItem('id')}`);
                 setProductList(res.data);
             } catch (err) {
-                console.log(err.message);
+                alert(err.message);
             }
         };
         getData();
@@ -120,9 +119,8 @@ export default function ExportPage() {
             try {
                 const res = await axios.get(`http://localhost:8000/agency`);
                 setAgency(res.data);
-                console.log(res.data);
             } catch (err) {
-                console.log(err.message);
+                alert(err.message);
             }
         };
         getAgency();
@@ -133,7 +131,6 @@ export default function ExportPage() {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -147,10 +144,14 @@ export default function ExportPage() {
         setPage(0);
         setFilterName(event.target.value);
     };
-
-    const handleClickExport = () => {
-        axios.post('http://localhost:8000/factory/export-product', rowData);
-        window.location.reload();
+    const handleClickExport = async () => {
+        try {
+            await axios.post('http://localhost:8000/factory/export-product', rowData);
+            window.location.reload();
+        } catch (err) {
+            alert(err.message);
+        }
+        
     }
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
@@ -186,7 +187,7 @@ export default function ExportPage() {
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { _id, code, quantity} = row;
+                                        const { _id, code, quantity } = row;
                                         return (
                                             <TableRow hover key={_id}>
                                                 <TableCell />

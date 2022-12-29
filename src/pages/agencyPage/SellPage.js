@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, {  useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
     Box,
@@ -88,8 +88,6 @@ export default function SellPage() {
 
     const [order, setOrder] = useState('asc');
 
-    const [selected, setSelected] = useState([]);
-
     const [orderBy, setOrderBy] = useState('code');
 
     const [filterName, setFilterName] = useState('');
@@ -97,8 +95,8 @@ export default function SellPage() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [createOpenEdit, setOpenEdit] = useState(false);
     const [PRODUCTLIST, setProductList] = useState([]);
-    const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell:'', nameCustomer: '', address: '', sdt: ''});
-   
+    const [rowData, setRowData] = useState({ _id: '', idAgency: '', code: '', quantity: '', quantitySell: '', nameCustomer: '', address: '', sdt: '' });
+
 
     useEffect(() => {
         const getData = async () => {
@@ -106,12 +104,12 @@ export default function SellPage() {
                 const res = await axios.get(`http://localhost:8000/agency/storage/${sessionStorage.getItem('id')}`);
                 setProductList(res.data);
             } catch (err) {
-                // console.log('fe : ' + err.message);
+                alert(err.message);
             }
         };
         getData();
     }, []);
-    
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -119,9 +117,6 @@ export default function SellPage() {
         setOrderBy(property);
     };
 
-    
-
-   
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -135,11 +130,15 @@ export default function SellPage() {
         setFilterName(event.target.value);
     };
 
-    
-    const handleClickSell = () => {
-        axios.post('http://localhost:8000/agency/sell-product', rowData);
-        window.location.reload();
-     }
+
+    const handleClickSell = async () => {
+        try {
+            await axios.post('http://localhost:8000/agency/sell-product', rowData);
+            window.location.reload();
+        } catch (err) {
+            alert(err.message);
+        }
+    }
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTLIST, getComparator(order, orderBy), filterName);
@@ -157,11 +156,11 @@ export default function SellPage() {
                     <Typography variant="h4" gutterBottom>
                         Bán sản phẩm
                     </Typography>
-                   
+
                 </Stack>
 
                 <Card>
-                    <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <ProductListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
@@ -171,16 +170,14 @@ export default function SellPage() {
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
                                     rowCount={PRODUCTLIST.length}
-                                    numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
-                                   
+
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         const { _id, idFactory, code, quantity, createdAt, updatedAt, _v } = row;
-                                        const selectedUser = selected.indexOf(code) !== -1;
                                         return (
-                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                                                 <TableCell />
 
                                                 <TableCell align='left'>{_id}</TableCell>
@@ -264,7 +261,7 @@ export default function SellPage() {
                         <Typography id="transition-modal-title" variant="h6" component="h2">
                             Nhập thông tin đơn hàng
                         </Typography>
-                        
+
                         <TextField
                             sx={{ margin: '15px 0' }}
                             label="Tên khách hàng"
@@ -276,7 +273,7 @@ export default function SellPage() {
                                     ...rowData,
                                     nameCustomer: e.target.value,
                                 }))
-                            }}                        
+                            }}
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -291,7 +288,7 @@ export default function SellPage() {
                                 }))
                             }}
                         />
-                       <TextField
+                        <TextField
                             sx={{ margin: '15px 0' }}
                             label="Số điện thoại"
                             variant="standard"
@@ -302,7 +299,7 @@ export default function SellPage() {
                                     ...rowData,
                                     sdt: e.target.value,
                                 }))
-                            }}                        
+                            }}
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -310,8 +307,8 @@ export default function SellPage() {
                             variant="standard"
                             fullWidth
                             type="text"
-                            value={rowData.code}  
-                            disabled                    
+                            value={rowData.code}
+                            disabled
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -324,7 +321,7 @@ export default function SellPage() {
                                     ...rowData,
                                     quantitySell: e.target.value,
                                 }))
-                            }}                        
+                            }}
                         />
                         <Button
                             sx={{ marginTop: '10px' }}

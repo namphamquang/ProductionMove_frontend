@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -98,19 +98,23 @@ export default function InsurancePage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [createOpenEdit, setOpenEdit] = useState(false);
+
   const [createOpenEdit2, setOpenEdit2] = useState(false);
+
   const [BILLLIST, setBillList] = useState([]);
+
   const [factory, setFactory] = useState([]);
+
   const [rowData, setRowData] = useState({ _id: '', idOrderGuarantee: '' });
-  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'),  code: '', quantity: '', idFactory: '' });
+
+  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'), code: '', quantity: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
@@ -118,7 +122,7 @@ export default function InsurancePage() {
         const res = await axios.get(`http://localhost:8000/guarantee/insurancing/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -131,9 +135,8 @@ export default function InsurancePage() {
       try {
         const res = await axios.get(`http://localhost:8000/factory`);
         setFactory(res.data);
-        console.log(res.data);
       } catch (err) {
-        console.log(err.message);
+        alert(err.message);
       }
     };
     getFactory();
@@ -152,8 +155,6 @@ export default function InsurancePage() {
     return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
   }
 
-
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -167,14 +168,22 @@ export default function InsurancePage() {
     setFilterName(event.target.value);
   };
 
-  const handleReturnAgency = () => {
-    axios.post(`http://localhost:8000/guarantee/submit-gta`, rowData);
-    window.location.reload();
+  const handleReturnAgency = async () => {
+    try {
+      await axios.post(`http://localhost:8000/guarantee/submit-gta`, rowData);
+      window.location.reload();
+    }
+    catch (err) {
+      alert(err.message);
+    }
   }
-  const handleReturnFactory = () => {
-    axios.post(`http://localhost:8000/guarantee/submit-gtf`, rowData1);
-    console.log(rowData1);
-    window.location.reload();
+  const handleReturnFactory = async () => {
+    try {
+      await axios.post(`http://localhost:8000/guarantee/submit-gtf`, rowData1);
+      window.location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
   }
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
@@ -195,7 +204,7 @@ export default function InsurancePage() {
           </Typography>
         </Stack>
         <Card>
-          <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <TransListToolbar filterName={filterName} onFilterName={handleFilterByName} />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -204,16 +213,14 @@ export default function InsurancePage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={BILLLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
 
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, nameAgency, status, date } = row;
-                    const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" >
                         <TableCell padding="checkbox" />
 
                         <TableCell align='left'>{_id}</TableCell>
@@ -314,7 +321,7 @@ export default function InsurancePage() {
           <Iconify icon={'material-symbols:keyboard-return'} sx={{ mr: 2 }} />
           Trả lại đại lý
         </MenuItem>
-        <MenuItem onClick={() => { setOpenEdit2(true)}}>
+        <MenuItem onClick={() => { setOpenEdit2(true) }}>
           <Iconify icon={'ph:key-return-light'} sx={{ mr: 2 }} />
           Trả về CSSX
         </MenuItem>

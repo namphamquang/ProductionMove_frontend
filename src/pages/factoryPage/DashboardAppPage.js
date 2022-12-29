@@ -3,43 +3,44 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Box, Grid, Container, Typography, Select, MenuItem, InputLabel } from '@mui/material';
-
+import { Grid, Container, Typography } from '@mui/material';
 import axios from 'axios';
-import { Label } from '@mui/icons-material';
 // components
 import Iconify from '../../components/iconify';
 // sections
 import {
   AppTasks,
   AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
   AppWebsiteVisits,
   AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
   AppConversionRates,
 } from '../../sections/@factory/app';
-
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
-  const theme = useTheme();
   const [productMonth, setProductMonth] = useState([]);
   const [productError, setProductError] = useState([]);
+
   const getProductMonth = async () => {
-    const response = await axios.get(`http://localhost:8000/factory/statistic-year/${sessionStorage.getItem('id')}`);
-    setProductMonth(response.data);
+    try {
+      const response = await axios.get(`http://localhost:8000/factory/statistic-year/${sessionStorage.getItem('id')}`);
+      setProductMonth(response.data);
+    } catch (err) {
+      alert(err.message);
+    }
   };
   useEffect(() => {
     getProductMonth();
   }, []);
+
   const getProductError = async () => {
-    const response = await axios.get(`http://localhost:8000/factory/statistic-error/${sessionStorage.getItem('id')}`);
-    setProductError(response.data);
+    try {
+      const response = await axios.get(`http://localhost:8000/factory/statistic-error/${sessionStorage.getItem('id')}`);
+      setProductError(response.data);
+    } catch (err) {
+      alert(err.message);
+    }
   };
   useEffect(() => {
     getProductError();
@@ -54,7 +55,6 @@ export default function DashboardAppPage() {
       <Helmet>
         <title> Dashboard | ProductionMove </title>
       </Helmet>
-
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back

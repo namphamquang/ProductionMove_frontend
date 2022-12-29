@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -30,8 +30,6 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import axios from 'axios';
 // components
-import CreateUser from '../../sections/@admin/user/CreateUser';
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
@@ -96,18 +94,22 @@ export default function UserPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
+
   const [createOpenEdit, setOpenEdit] = useState(false);
+
   const [USERLIST, setUserlist] = useState([]);
+
   const [rowData, setRowData] = useState({ _id: '', name: '', username: '', password: '', role: '' });
+
   const [user, setUser] = useState({ _id: '', name: '', username: '', password: '', role: '', address: '', sdt: '' });
+
   const [id, setId] = useState('');
 
 
@@ -117,7 +119,7 @@ export default function UserPage() {
         const res = await axios.get('http://localhost:8000/user');
         setUserlist(res.data);
       } catch (err) {
-        console.log(err.message);
+        alert(err.message);
       }
     };
     getData();
@@ -150,9 +152,14 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const handleCreate = () => {
-    axios.post("http://localhost:8000/user/create", user);
-    window.location.reload();
+  const handleCreate = async () => {
+    try {
+      await axios.post("http://localhost:8000/user/create", user);
+      window.location.reload();
+    }
+    catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleUpdate = async () => {
@@ -164,12 +171,16 @@ export default function UserPage() {
         alert(res.data.msg);
       }
     } catch (err) {
-      console.log(err.message);
+      alert(err.message);
     }
   };
-  const handleDelete = () => {
-    axios.delete(`http://localhost:8000/user/delete/${id}`);
-    window.location.reload();
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:8000/user/delete/${id}`);
+      window.location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -458,7 +469,7 @@ export default function UserPage() {
                 >
                   <MenuItem key='1' value={'admin'}>Quản trị viên</MenuItem>
                   <MenuItem key='2' value={'factory'}>Cơ sở sản xuất</MenuItem>
-                  
+
                 </Select>
               </FormControl>
               <TextValidator

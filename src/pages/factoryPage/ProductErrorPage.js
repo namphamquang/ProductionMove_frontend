@@ -76,8 +76,6 @@ export default function ProductErrorPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
@@ -86,21 +84,18 @@ export default function ProductErrorPage() {
 
   const [BILLLIST, setBillList] = useState([]);
 
-  
-
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/factory/error-product/${sessionStorage.getItem('id')}`);
         setBillList(res.data);
       } catch (err) {
-        // console.log('fe : ' + err.message);
+        alert(err.message);
       }
     };
     getData();
   }, []);
  
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -109,14 +104,6 @@ export default function ProductErrorPage() {
   const mapColor = (status) => {
     return (status === "Đang vận chuyển") ? 'warning' : (status === "Giao hàng thành công") ? 'success' : 'default';
   }
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = BILLLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -130,8 +117,6 @@ export default function ProductErrorPage() {
     setPage(0);
     setFilterName(event.target.value);
   };
-
-  
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
 
@@ -153,7 +138,7 @@ export default function ProductErrorPage() {
         </Stack>
 
         <Card>
-          <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <TransListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -163,16 +148,13 @@ export default function ProductErrorPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={BILLLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { _id, code, quantity, nameGuarantee, status, date } = row;
-                     const selectedUser = selected.indexOf(code) !== -1;
                     return (
-                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" >
                         <TableCell padding="checkbox"/>
                         <TableCell align="left">{code}</TableCell>
                         <TableCell align="left">{quantity}</TableCell>

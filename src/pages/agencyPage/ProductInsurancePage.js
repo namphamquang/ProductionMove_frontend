@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @mui
 import {
     Card,
@@ -77,13 +77,13 @@ export default function ProductInsurancePage() {
 
     const [order, setOrder] = useState('asc');
 
-    const [selected, setSelected] = useState([]);
 
     const [orderBy, setOrderBy] = useState('name');
 
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
     const [BILLLIST, setBillList] = useState([]);
 
 
@@ -93,7 +93,7 @@ export default function ProductInsurancePage() {
                 const res = await axios.get(`http://localhost:8000/delivery/atg/${sessionStorage.getItem('id')}`);
                 setBillList(res.data);
             } catch (err) {
-                // console.log('fe : ' + err.message);
+                alert(err.message);
             }
         };
         getData();
@@ -106,11 +106,8 @@ export default function ProductInsurancePage() {
         setOrderBy(property);
     };
     const mapColor = (status) => {
-        return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : (status === "Lỗi-Không sửa được") ? 'error': 'default';
+        return (status === "Đang bảo hành") ? 'warning' : (status === "Khách đã nhận") ? 'success' : (status === "Lỗi-Không sửa được") ? 'error' : 'default';
     }
-
-
-
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -124,13 +121,15 @@ export default function ProductInsurancePage() {
         setPage(0);
         setFilterName(event.target.value);
     };
-    const handleReturn = (idBill) => {
-        const body = {};
-        body.idOrderGuarantee = idBill;
-        console.log(body);
-        axios.post(`http://localhost:8000/agency/submit-atc`, body);
-        window.location.reload();
-
+    const handleReturn = async (idBill) => {
+        try {
+            const body = {};
+            body.idOrderGuarantee = idBill;
+            await axios.post(`http://localhost:8000/agency/submit-atc`, body);
+            window.location.reload();
+        } catch (err) {
+            alert(err.message);
+        }
     }
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BILLLIST.length) : 0;
@@ -153,7 +152,7 @@ export default function ProductInsurancePage() {
                 </Stack>
 
                 <Card>
-                    <TransListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <TransListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
@@ -163,16 +162,13 @@ export default function ProductInsurancePage() {
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
                                     rowCount={BILLLIST.length}
-                                    numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
-
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         const { _id, code, quantity, nameCustomer, nameGuarantee, status, date } = row;
-                                        const selectedUser = selected.indexOf(code) !== -1;
                                         return (
-                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                            <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                                                 <TableCell padding="checkbox" />
                                                 <TableCell align='left'>{_id}</TableCell>
                                                 <TableCell align='left'>{nameCustomer}</TableCell>
@@ -184,7 +180,7 @@ export default function ProductInsurancePage() {
                                                     (<TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>)}
                                                 {(status !== 'Đang vận chuyển' && status !== 'Đang bảo hành' && status !== 'Khách đã nhận' && status !== 'Lỗi-Không sửa được') &&
                                                     (<TableCell align="center"><Button onClick={() => { handleReturn(_id); }} sx={{ fontSize: 12, p: 0.5 }} variant="contained">Giao cho khách</Button></TableCell>)}
-                                                
+
                                             </TableRow>
                                         );
                                     })}
