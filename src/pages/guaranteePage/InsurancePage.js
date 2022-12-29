@@ -115,7 +115,7 @@ export default function InsurancePage() {
 
   const [rowData, setRowData] = useState({ _id: '', idOrderGuarantee: '' });
 
-  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'), code: '', quantity: '', idFactory: '' });
+  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'), code: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
@@ -237,13 +237,13 @@ export default function InsurancePage() {
                               ...rowData,
                               idOrderGuarantee: row._id,
                               code: row.code,
-                              quantity: row.quantity
+                    
                             }));
                             setRowData1(rowData1 => ({
                               ...rowData1,
                               idOrderGuarantee: row._id,
                               code: row.code,
-                              quatity: row.quantity
+                    
                             }));
                             handleOpenMenu(e);
 
