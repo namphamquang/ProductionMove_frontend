@@ -132,7 +132,7 @@ export default function ProductPage() {
 
   const handleAdd = async () => {
     try {
-      await axios.post("http://localhost:8000/product/productline-create", add);
+      await axios.post(`http://localhost:8000/factory/import-new-product/${sessionStorage.getItem('id')}`, add);
       window.location.reload();
     } catch (err) {
       alert(err.message);
