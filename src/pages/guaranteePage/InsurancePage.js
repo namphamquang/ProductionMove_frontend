@@ -113,9 +113,9 @@ export default function InsurancePage() {
 
   const [factory, setFactory] = useState([]);
 
-  const [rowData, setRowData] = useState({ _id: '', idOrderGuarantee: '' });
+  const [rowData, setRowData] = useState({ _id: '',idGuarantee: sessionStorage.getItem('id'), idOrderGuarantee: '' });
 
-  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'), code: '', idFactory: '' });
+  const [rowData1, setRowData1] = useState({ idGuarantee: sessionStorage.getItem('id'),idOrderGuarantee: '', code: '', idFactory: '' });
 
   useEffect(() => {
     const getData = async () => {
