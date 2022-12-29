@@ -279,7 +279,7 @@ export default function ProductPage() {
             <Typography id="transition-modal-title" variant="h6" component="h2">
               Nhập thông tin vận chuyển
             </Typography>
-            <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+            <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
               <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -291,6 +291,7 @@ export default function ProductPage() {
                     idFactory: e.target.value,
                   }))
                 }}
+                required
               >
                 {(factory).map((row) => {
                   const { _id, name } = row;
@@ -321,6 +322,7 @@ export default function ProductPage() {
                   quantity: e.target.value,
                 }))
               }}
+              required
             />
 
             <Button

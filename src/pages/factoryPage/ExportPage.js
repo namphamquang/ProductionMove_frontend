@@ -273,7 +273,7 @@ export default function ExportPage() {
                         <Typography id="transition-modal-title" variant="h6" component="h2">
                             Nhập thông tin vận chuyển
                         </Typography>
-                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                        <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
                             <InputLabel id="demo-simple-select-label">Đại lý</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -285,6 +285,7 @@ export default function ExportPage() {
                                         idAgency: e.target.value,
                                     }))
                                 }}
+                                required
                             >
                                 {(agency).map((row) => {
                                     const { _id, name } = row;
@@ -301,6 +302,7 @@ export default function ExportPage() {
                             fullWidth
                             type="text"
                             value={rowData.code}
+                            disabled
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -314,6 +316,7 @@ export default function ExportPage() {
                                     quantity: e.target.value,
                                 }))
                             }}
+                            required
                         />
 
                         <Button

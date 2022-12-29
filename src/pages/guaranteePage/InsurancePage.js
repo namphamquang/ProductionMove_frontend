@@ -55,6 +55,7 @@ const TABLE_HEAD = [
   { id: 'code', label: 'Mã sản phẩm', alignRight: false },
   { id: 'quantity', label: 'Số lượng', alignRight: false },
   { id: 'nameAgency', label: 'Nhận từ', alignRight: false },
+  { id: 'description', label: 'Lỗi', alignRight: false },
   { id: 'status', label: 'Trạng thái', alignRight: true },
   { id: 'date', label: 'Ngày bảo hành', alignRight: false },
   { id: '' },
@@ -218,7 +219,7 @@ export default function InsurancePage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, code, quantity, nameAgency, status, date } = row;
+                    const { _id, code, quantity, nameAgency, status, date , description} = row;
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" >
                         <TableCell padding="checkbox" />
@@ -227,6 +228,7 @@ export default function InsurancePage() {
                         <TableCell align="left">{code}</TableCell>
                         <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{nameAgency}</TableCell>
+                        <TableCell align="left">{description}</TableCell>
                         <TableCell align="center"><Label color={mapColor(status)}>{status}</Label></TableCell>
                         <TableCell align="left" >{date}</TableCell>
                         <TableCell align="right">
@@ -234,15 +236,15 @@ export default function InsurancePage() {
                             setRowData(rowData => ({
                               ...rowData,
                               idOrderGuarantee: row._id,
-                              code: row.code
+                              code: row.code,
+                              quantity: row.quantity
                             }));
-                            console.log(rowData);
                             setRowData1(rowData1 => ({
                               ...rowData1,
                               idOrderGuarantee: row._id,
-                              code: row.code
+                              code: row.code,
+                              quatity: row.quantity
                             }));
-                            console.log(rowData1);
                             handleOpenMenu(e);
 
                           }}>
@@ -373,7 +375,7 @@ export default function InsurancePage() {
             <Typography id="transition-modal-title" variant="h6" component="h2">
               Nhập thông tin vận chuyển
             </Typography>
-            <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+            <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
               <InputLabel id="demo-simple-select-label">Cơ sở sản xuất</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -385,6 +387,7 @@ export default function InsurancePage() {
                     idFactory: e.target.value,
                   }))
                 }}
+                required
               >
                 {(factory).map((row) => {
                   const { _id, name } = row;
@@ -402,19 +405,6 @@ export default function InsurancePage() {
               type="text"
               value={rowData1.code}
               disabled
-            />
-            <TextField
-              sx={{ margin: '15px 0' }}
-              label="Số lượng"
-              variant="standard"
-              fullWidth
-              type="number"
-              onChange={(e) => {
-                setRowData1(rowData1 => ({
-                  ...rowData1,
-                  quantity: e.target.value,
-                }))
-              }}
             />
 
             <Button

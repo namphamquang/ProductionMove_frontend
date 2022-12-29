@@ -274,6 +274,7 @@ export default function SellPage() {
                                     nameCustomer: e.target.value,
                                 }))
                             }}
+                            required
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -287,6 +288,7 @@ export default function SellPage() {
                                     address: e.target.value,
                                 }))
                             }}
+                            required
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -300,6 +302,7 @@ export default function SellPage() {
                                     sdt: e.target.value,
                                 }))
                             }}
+                            required
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -322,6 +325,7 @@ export default function SellPage() {
                                     quantitySell: e.target.value,
                                 }))
                             }}
+                            required
                         />
                         <Button
                             sx={{ marginTop: '10px' }}

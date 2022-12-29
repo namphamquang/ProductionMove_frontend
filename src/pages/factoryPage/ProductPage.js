@@ -325,6 +325,7 @@ export default function ProductPage() {
                     quantity: e.target.value,
                   }))
                 }}
+                required
               />
               <Button
                 sx={{ marginTop: '10px' }}
@@ -351,7 +352,7 @@ export default function ProductPage() {
               Thêm sản phẩm mới vào kho
             </Typography>
             <ValidatorForm onSubmit={handleAdd}>
-            <FormControl variant='standard' fullWidth size='small'  sx={{ margin: '15px 0' }}>
+            <FormControl required variant='standard' fullWidth size='small'  sx={{ margin: '15px 0' }}>
                             <InputLabel id="demo-simple-select-label">Mã sản phẩm</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -363,6 +364,7 @@ export default function ProductPage() {
                                         code: e.target.value,
                                     }))
                                 }}
+                                required
                             >
                                 {(products).map((row) => {
                                     const { code } = row;

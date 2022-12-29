@@ -355,6 +355,7 @@ export default function UserPage() {
                   label="Tên"
                   variant="standard"
                   color="secondary"
+                  disabled
                 />
                 <TextValidator
                   sx={{ marginTop: '10px' }}
@@ -363,6 +364,7 @@ export default function UserPage() {
                   label="Username"
                   variant="standard"
                   color="secondary"
+                  disabled
                 />
                 <TextValidator
                   sx={{ marginTop: '10px' }}
@@ -371,7 +373,7 @@ export default function UserPage() {
                   value={rowData.role}
                   variant="standard"
                   color="secondary"
-
+                  disabled
                 />
                 <TextValidator
                   sx={{ marginTop: '10px' }}
@@ -384,7 +386,7 @@ export default function UserPage() {
                       ...rowData,
                       password: e.target.value,
                     }))
-                  }} />
+                  }} required />
                 <Button
                   sx={{ marginTop: '10px' }}
                   variant="contained"
@@ -453,7 +455,7 @@ export default function UserPage() {
                 }}
                 required
               />
-              <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+              <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
                 <InputLabel id="demo-simple-select-label">Role</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"

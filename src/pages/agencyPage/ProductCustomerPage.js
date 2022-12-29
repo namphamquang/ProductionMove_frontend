@@ -337,7 +337,7 @@ export default function ProductCustomerPage() {
                             disabled
 
                         />
-                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                        <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
                             <InputLabel id="demo-simple-select-label">Trung tâm bảo hành</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -349,6 +349,7 @@ export default function ProductCustomerPage() {
                                         idGuarantee: e.target.value,
                                     }))
                                 }}
+                                required
                             >
                                 {(guarantee).map((row1) => {
                                     const { _id, name } = row1;
@@ -370,6 +371,7 @@ export default function ProductCustomerPage() {
                                     quantity: e.target.value,
                                 }))
                             }}
+                            required
                         />
                         <TextField
                             sx={{ margin: '15px 0' }}
@@ -383,6 +385,7 @@ export default function ProductCustomerPage() {
                                     description: e.target.value,
                                 }))
                             }}
+                            required
 
                         />
 
@@ -423,7 +426,7 @@ export default function ProductCustomerPage() {
                             disabled
 
                         />
-                        <FormControl variant='standard' fullWidth sx={{ margin: '15px 0' }}>
+                        <FormControl required variant='standard' fullWidth sx={{ margin: '15px 0' }}>
                             <InputLabel id="demo-simple-select-label">Trung tâm bảo hành</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -435,6 +438,7 @@ export default function ProductCustomerPage() {
                                         idGuarantee: e.target.value,
                                     }))
                                 }}
+                                required
                             >
                                 {(guarantee).map((row1) => {
                                     const { _id, name } = row1;
@@ -465,6 +469,7 @@ export default function ProductCustomerPage() {
                                     description: e.target.value,
                                 }))
                             }}
+                            
 
                         />
 
