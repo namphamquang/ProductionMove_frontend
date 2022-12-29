@@ -54,7 +54,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Tên', alignRight: false },
   { id: 'username', label: 'Username', alignRight: false },
   { id: 'role', label: 'Vai trò', alignRight: false },
-  { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
+  { id: 'date', label: 'Ngày tạo', alignRight: false },
   { id: '' },
 ];
 
@@ -209,7 +209,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, name, username, role, createdAt } = row;
+                    const { _id, name, username, role, date } = row;
                     return (
                       <TableRow hover key={_id} >
                         <TableCell />
@@ -221,7 +221,7 @@ export default function UserPage() {
 
                         <TableCell align="left">{role}</TableCell>
 
-                        <TableCell align="left" >{createdAt}</TableCell>
+                        <TableCell align="left" >{date}</TableCell>
 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(e) => {
