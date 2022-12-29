@@ -471,7 +471,8 @@ export default function UserPage() {
                 >
                   <MenuItem key='1' value={'admin'}>Quản trị viên</MenuItem>
                   <MenuItem key='2' value={'factory'}>Cơ sở sản xuất</MenuItem>
-
+                  <MenuItem key='3' value={'agency'}>Đại lý</MenuItem>
+                  <MenuItem key='4' value={'guarantee'}>Trung tâm bảo hành</MenuItem>
                 </Select>
               </FormControl>
               <TextValidator
