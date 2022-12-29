@@ -52,7 +52,7 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={100}>
 
             <AppWebsiteVisits
-              title="Thống kê sản phẩm tại đại lý năm 2022"
+              title="Thống kê sản phẩm tại trung tâm bảo hành năm 2022"
               chartLabels={label}
               chartData={[
                 {
